@@ -1,0 +1,3 @@
+# Overrides the workspace-level config: this codebase uses 2-space indentation.
+[*]
+indent_size = 2
