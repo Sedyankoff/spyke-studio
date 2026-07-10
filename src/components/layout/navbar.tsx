@@ -59,90 +59,116 @@ export function Navbar() {
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5">
-      <m.nav
-        aria-label="Primary"
-        initial={{ y: -24, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.9, delay: 0.4, ease: EASE_OUT }}
-        className={cn(
-          "flex w-full max-w-3xl items-center justify-between gap-2 rounded-full border py-2 pr-2 pl-5 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 md:w-auto md:justify-start",
-          scrolled
-            ? "border-white/10 bg-background/75 shadow-[0_12px_48px_-16px_rgba(0,0,0,0.7)]"
-            : "border-white/[0.06] bg-background/45",
-        )}
-      >
-        <button
-          type="button"
-          onClick={scrollToTop}
-          aria-label="Scroll to top"
-          className="rounded-full"
-        >
-          <Logo className="text-[17px]" />
-        </button>
+    <>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 top-0 z-30 h-28 bg-gradient-to-b from-background/85 to-transparent"
+      />
 
-        <ul className="mx-3 hidden items-center md:flex">
-          {navItems.map((item) => (
-            <li key={item.href}>
-              <a
-                href={item.href}
-                onClick={(event) => navigate(event, item)}
-                aria-current={isActive(item) ? "true" : undefined}
-                className={cn(
-                  "relative isolate rounded-full px-3.5 py-2 text-[13px] font-medium transition-colors duration-300",
-                  isActive(item)
-                    ? "text-foreground"
-                    : "text-muted hover:text-foreground",
-                )}
-              >
-                {isActive(item) && (
-                  <m.span
-                    layoutId="nav-active-pill"
-                    aria-hidden="true"
-                    transition={{ type: "spring", stiffness: 380, damping: 34 }}
-                    className="absolute inset-0 -z-10 rounded-full bg-white/[0.07]"
-                  />
-                )}
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+      <header className="fixed inset-x-0 top-0 z-40">
+        <div className="relative flex items-center justify-between px-5 pt-4 sm:px-8 sm:pt-5">
+          <m.div
+            initial={{ y: -24, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.3, ease: EASE_OUT }}
+          >
+            <button
+              type="button"
+              onClick={scrollToTop}
+              aria-label="Scroll to top"
+              className="drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
+            >
+              <Logo className="text-2xl sm:text-3xl" />
+            </button>
+          </m.div>
 
-        <a
-          href={contactNavItem.href}
-          onClick={(event) => navigate(event, contactNavItem)}
-          className={cn(
-            "hidden h-9 items-center rounded-full px-4 text-[13px] font-medium transition-all duration-300 md:inline-flex",
-            activeSection === "contact"
-              ? "bg-foreground text-background"
-              : "border border-white/15 text-foreground hover:border-white/30 hover:bg-white/[0.06]",
+          <m.nav
+            aria-label="Primary"
+            initial={{ y: -24, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.4, ease: EASE_OUT }}
+            className={cn(
+              "absolute top-4 left-1/2 hidden -translate-x-1/2 items-center rounded-full border p-2 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 sm:top-5 md:flex",
+              scrolled
+                ? "border-white/10 bg-background/75 shadow-[0_12px_48px_-16px_rgba(0,0,0,0.7)]"
+                : "border-white/[0.06] bg-background/45",
+            )}
+          >
+            <ul className="flex items-center">
+              {navItems.map((item) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    onClick={(event) => navigate(event, item)}
+                    aria-current={isActive(item) ? "true" : undefined}
+                    className={cn(
+                      "relative isolate rounded-full px-3.5 py-2 text-[13px] font-medium transition-colors duration-300",
+                      isActive(item)
+                        ? "text-foreground"
+                        : "text-muted hover:text-foreground",
+                    )}
+                  >
+                    {isActive(item) && (
+                      <m.span
+                        layoutId="nav-active-pill"
+                        aria-hidden="true"
+                        transition={{
+                          type: "spring",
+                          stiffness: 380,
+                          damping: 34,
+                        }}
+                        className="absolute inset-0 -z-10 rounded-full bg-white/[0.07]"
+                      />
+                    )}
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href={contactNavItem.href}
+              onClick={(event) => navigate(event, contactNavItem)}
+              className={cn(
+                "ml-2 inline-flex h-9 items-center rounded-full px-4 text-[13px] font-medium transition-all duration-300",
+                activeSection === "contact"
+                  ? "bg-foreground text-background"
+                  : "border border-white/15 text-foreground hover:border-white/30 hover:bg-white/[0.06]",
+              )}
+            >
+              Let&apos;s talk
+            </a>
+          </m.nav>
+
+          <m.div
+            initial={{ y: -24, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.4, ease: EASE_OUT }}
+            className="md:hidden"
+          >
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-background/45 text-foreground backdrop-blur-xl"
+            >
+              <Menu className="h-4 w-4" />
+            </button>
+          </m.div>
+        </div>
+
+        <AnimatePresence>
+          {menuOpen && (
+            <MobileMenu
+              onNavigate={navigate}
+              onScrollToTop={scrollToTop}
+              onClose={() => setMenuOpen(false)}
+            />
           )}
-        >
-          Let&apos;s talk
-        </a>
-
-        <button
-          type="button"
-          onClick={() => setMenuOpen(true)}
-          aria-label="Open menu"
-          aria-expanded={menuOpen}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-foreground md:hidden"
-        >
-          <Menu className="h-4 w-4" />
-        </button>
-      </m.nav>
-
-      <AnimatePresence>
-        {menuOpen && (
-          <MobileMenu
-            onNavigate={navigate}
-            onScrollToTop={scrollToTop}
-            onClose={() => setMenuOpen(false)}
-          />
-        )}
-      </AnimatePresence>
-    </header>
+        </AnimatePresence>
+      </header>
+    </>
   );
 }
 
@@ -163,13 +189,13 @@ function MobileMenu({ onNavigate, onScrollToTop, onClose }: MobileMenuProps) {
       transition={{ duration: 0.35, ease: "easeOut" }}
       className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-2xl"
     >
-      <div className="flex items-center justify-between px-6 pt-6">
+      <div className="flex items-center justify-between px-5 pt-4">
         <button
           type="button"
           onClick={onScrollToTop}
           aria-label="Scroll to top"
         >
-          <Logo className="text-[17px]" />
+          <Logo className="text-2xl" />
         </button>
         <button
           type="button"
