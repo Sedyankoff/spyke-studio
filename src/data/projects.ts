@@ -24,16 +24,16 @@ export const projects: Project[] = [
     stack: ["Next.js", "TypeScript", "Node.js", "PostgreSQL", "Tailwind CSS"],
     images: {
       desktop: {
-        src: "/images/projects/spyke-commerce-desktop.jpg",
+        src: "/images/projects/spyke-commerce-dashboard.png",
         alt: "Spyke Commerce analytics dashboard with revenue, sessions and traffic-source charts",
-        width: 1600,
-        height: 1000,
+        width: 2559,
+        height: 1393,
       },
       phone: {
-        src: "/images/projects/spyke-commerce-phone.jpg",
+        src: "/images/projects/spyke-commerce-phone.png",
         alt: "Spyke Commerce product management on mobile",
-        width: 800,
-        height: 1732,
+        width: 576,
+        height: 1257,
       },
     },
     theme: {
@@ -64,16 +64,16 @@ export const projects: Project[] = [
     stack: ["Next.js", "TypeScript", "Spyke Commerce", "PostgreSQL"],
     images: {
       desktop: {
-        src: "/images/projects/gnc-desktop.jpg",
+        src: "/images/projects/gnc-landing.png",
         alt: "GNC Bulgaria storefront homepage with campaign banner and category navigation",
-        width: 1600,
-        height: 1000,
+        width: 2559,
+        height: 1398,
       },
       phone: {
-        src: "/images/projects/gnc-phone.jpg",
+        src: "/images/projects/gnc-phone.png",
         alt: "GNC Bulgaria news feed on mobile",
-        width: 800,
-        height: 1732,
+        width: 581,
+        height: 1255,
       },
     },
     theme: {
@@ -104,16 +104,16 @@ export const projects: Project[] = [
     stack: ["Next.js", "TypeScript", "Leaflet", "Tailwind CSS"],
     images: {
       desktop: {
-        src: "/images/projects/bookapart-desktop.jpg",
+        src: "/images/projects/bookapart-landing-page.png",
         alt: "BookApart homepage hero over an aerial Rhodope forest with stay statistics",
-        width: 1600,
-        height: 1000,
+        width: 2544,
+        height: 1397,
       },
       phone: {
-        src: "/images/projects/bookapart-phone.jpg",
+        src: "/images/projects/bookapart-landing-mobile-page.png",
         alt: "BookApart mobile homepage with curated stays",
-        width: 800,
-        height: 1732,
+        width: 577,
+        height: 1255,
       },
     },
     theme: {
