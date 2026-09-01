@@ -1,95 +1,82 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
-import { contactNavItem, navItems } from "@/constants/navigation";
-import { siteConfig } from "@/constants/site";
-import { useSmoothScroll } from "@/components/providers/lenis-provider";
+import { ArrowUp } from "lucide-react";
+import { SpykeLogo } from "@/components/brand/spyke-logo";
 import { Container } from "@/components/ui/container";
-import { Logo } from "@/components/ui/logo";
 import { SocialLinks } from "@/components/ui/social-links";
-import type { NavItem } from "@/types";
+import { navSectionIds } from "@/content";
+import { siteConfig } from "@/content/site";
+import type { Dictionary } from "@/content/dictionary";
 
-export function Footer() {
-  const { scrollTo } = useSmoothScroll();
+interface FooterProps {
+  copy: Dictionary["footer"];
+  nav: Dictionary["nav"];
+  common: Dictionary["common"];
+}
 
-  const navigate = (event: React.MouseEvent, item: NavItem) => {
-    event.preventDefault();
-    scrollTo(item.href);
-    window.history.replaceState(null, "", item.href);
-  };
-
+export function Footer({ copy, nav, common }: FooterProps) {
   return (
-    <footer className="relative border-t border-white/[0.06]">
-      <Container className="py-16">
+    <footer className="relative overflow-hidden bg-ink text-paper">
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-red via-red/30 to-transparent"
+      />
+      <div aria-hidden="true" className="grain absolute inset-0 opacity-[0.04]" />
+
+      <Container className="relative py-16">
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
           <div>
-            <Logo className="text-2xl" />
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted">
-              Independent software studio — engineering digital products with
-              intent.
+            <a
+              href="#hero"
+              aria-label={siteConfig.name}
+              className="block h-8 w-fit sm:h-9"
+            >
+              <SpykeLogo tone="paper" sizes="170px" />
+            </a>
+            <p className="mt-6 max-w-xs text-sm leading-relaxed text-paper/55">
+              {copy.tagline}
             </p>
+            <p className="meta mt-6 text-paper/30">{siteConfig.coordinates}</p>
           </div>
 
-          <nav aria-label="Footer">
-            <ul className="grid grid-cols-2 gap-x-14 gap-y-3">
-              {[...navItems, contactNavItem].map((item) => (
-                <li key={item.href}>
+          <nav aria-label={nav.label}>
+            <ul className="grid grid-cols-2 gap-x-12 gap-y-3 sm:grid-cols-1">
+              {navSectionIds.map((id, index) => (
+                <li key={id}>
                   <a
-                    href={item.href}
-                    onClick={(event) => navigate(event, item)}
-                    className="text-sm text-muted transition-colors hover:text-foreground"
+                    href={`#${id}`}
+                    className="group inline-flex items-baseline gap-3 text-sm text-paper/55 transition-colors hover:text-paper"
                   >
-                    {item.label}
+                    <span className="font-mono text-[10px] tracking-[0.16em] text-paper/25 transition-colors group-hover:text-red-light">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    {nav.items[id].label}
                   </a>
                 </li>
               ))}
             </ul>
           </nav>
 
-          <div className="flex flex-col items-start gap-5">
-            <SocialLinks />
-            <LocalTime />
-          </div>
+          <SocialLinks tone="paper" />
         </div>
 
-        <div className="mt-16 flex flex-col gap-3 border-t border-white/[0.06] pt-6 text-xs text-faint sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-3 border-t border-line-invert-soft pt-6 text-xs text-paper/40 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+            © {new Date().getFullYear()} {siteConfig.name}. {copy.rights}
           </p>
-          <p>Designed &amp; engineered by {siteConfig.author.name}.</p>
-          <button
-            type="button"
-            onClick={() => scrollTo(0)}
-            className="group inline-flex items-center gap-1.5 font-mono tracking-[0.2em] uppercase transition-colors hover:text-foreground"
+          <p>{copy.builtBy}</p>
+          <a
+            href="#hero"
+            className="group inline-flex items-center gap-2 font-mono tracking-[0.18em] uppercase transition-colors hover:text-paper"
           >
-            Back to top
-            <ArrowUpRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </button>
+            {common.backToTop}
+            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-line-invert transition-colors duration-200 group-hover:border-red group-hover:bg-red">
+              <ArrowUp
+                aria-hidden="true"
+                className="h-3 w-3 transition-transform duration-300 ease-[var(--ease-spatial)] group-hover:-translate-y-0.5"
+              />
+            </span>
+          </a>
         </div>
       </Container>
     </footer>
-  );
-}
-
-function LocalTime() {
-  const [time, setTime] = useState<string | null>(null);
-
-  useEffect(() => {
-    const formatter = new Intl.DateTimeFormat("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: siteConfig.author.timeZone,
-    });
-    const tick = () => setTime(formatter.format(new Date()));
-    tick();
-    const interval = setInterval(tick, 30_000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <p className="font-mono text-[11px] tracking-[0.25em] text-faint uppercase">
-      {siteConfig.author.location} · {time ?? "--:--"}
-    </p>
   );
 }

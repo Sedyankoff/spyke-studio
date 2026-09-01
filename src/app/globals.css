@@ -1,72 +1,174 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0a0a0c;
-  --color-surface: #0e0e11;
-  --color-raised: #131318;
-  --color-foreground: #f5f5f6;
-  --color-muted: #9c9ca6;
-  --color-faint: #6b6b76;
-  --color-accent: #e5484d;
+  --color-paper: #f5f2ec;
+  --color-paper-raised: #fffdf8;
+  --color-paper-sunken: #e9e4db;
+  --color-ink: #1b1917;
+  --color-ink-raised: #26231f;
+  --color-ink-soft: #4d473e;
+  --color-ink-mute: #6f6759;
+  --color-void: #0b0a09;
 
-  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Sampled from the Spyke Studio logo mark. */
+  --color-red: #f40618;
+  --color-red-deep: #b30f18;
+  --color-red-light: #ff5f5a;
+  --color-red-tint: #fbe7e4;
+
+  --color-line: rgb(27 25 23 / 0.14);
+  --color-line-soft: rgb(27 25 23 / 0.07);
+  --color-line-invert: rgb(245 242 236 / 0.18);
+  --color-line-invert-soft: rgb(245 242 236 / 0.09);
+
+  --radius-tile: 0.875rem;
+  --radius-card: 1.25rem;
+  --radius-sheet: 1.75rem;
+
+  --ease-spatial: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-swift: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
-  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-display: var(--font-oswald), "Arial Narrow", ui-sans-serif, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
 }
 
 @layer base {
   html {
-    color-scheme: dark;
+    scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
   }
 
-  html.lenis,
-  html.lenis body {
-    height: auto;
-  }
-
-  .lenis.lenis-smooth {
-    scroll-behavior: auto !important;
-  }
-
-  .lenis.lenis-stopped {
-    overflow: hidden;
-  }
-
   body {
-    @apply bg-background font-sans text-foreground antialiased;
+    @apply bg-paper font-sans text-ink antialiased;
+    overflow-x: clip;
   }
 
   ::selection {
-    background-color: var(--color-accent);
-    color: #ffffff;
+    background-color: var(--color-red);
+    color: #fff;
   }
 
   :focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--color-accent) 70%, transparent);
+    outline: 2px solid var(--color-red);
     outline-offset: 3px;
+    border-radius: 3px;
   }
 
-  ::-webkit-scrollbar {
-    width: 10px;
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
   }
 
-  ::-webkit-scrollbar-track {
-    background: var(--color-background);
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .display-hero,
+  .display-section,
+  .display-statement,
+  .display-card,
+  .display-index {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: -0.005em;
   }
 
-  ::-webkit-scrollbar-thumb {
-    background: rgb(255 255 255 / 0.12);
-    border: 3px solid var(--color-background);
-    border-radius: 8px;
+  .display-hero {
+    font-size: clamp(2.75rem, 7.4vw, 7rem);
+    line-height: 0.94;
   }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgb(255 255 255 / 0.2);
+  .display-section {
+    font-size: clamp(2.125rem, 4.4vw, 3.75rem);
+    line-height: 0.98;
+  }
+
+  .display-statement {
+    font-size: clamp(1.625rem, 3.1vw, 2.875rem);
+    line-height: 1.02;
+  }
+
+  .display-card {
+    font-size: clamp(1.375rem, 2.3vw, 2rem);
+    line-height: 1.02;
+  }
+
+  /* Oversized editorial index numbers (project 01, 02 …). */
+  .display-index {
+    font-size: clamp(2.5rem, 5.6vw, 4.75rem);
+    line-height: 0.78;
+    letter-spacing: -0.02em;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .body-lg {
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  .body-base {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .section-y {
+    padding-block: 5rem;
+  }
+
+  @media (min-width: 640px) {
+    .body-lg {
+      font-size: 1.125rem;
+    }
+
+    .section-y {
+      padding-block: 6rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section-y {
+      padding-block: 8rem;
+    }
+  }
+
+  .rule {
+    height: 1px;
+    width: 100%;
+    border: 0;
+    background: var(--color-line);
   }
 }
 
@@ -74,10 +176,10 @@
   position: fixed;
   top: -100%;
   left: 1rem;
-  z-index: 100;
+  z-index: 90;
   border-radius: 9999px;
-  background: var(--color-foreground);
-  color: var(--color-background);
+  background: var(--color-ink);
+  color: var(--color-paper);
   padding: 0.625rem 1.25rem;
   font-size: 0.8125rem;
   font-weight: 500;
@@ -88,12 +190,291 @@
   top: 1rem;
 }
 
-.noise-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  pointer-events: none;
-  opacity: 0.032;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
+.grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+/* Hairline engineering grid — used behind dark compositions. */
+.blueprint {
+  background-image:
+    linear-gradient(to right, rgb(245 242 236 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(245 242 236 / 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.command-scroll-lock {
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   Hero composition
+   The photograph lives inside a dark field that dissolves into the paper
+   background: vertically on small screens, horizontally from lg upwards.
+--------------------------------------------------------------------------- */
+
+.hero-field {
+  --hero-ramp: transparent 0%, rgb(0 0 0 / 0.04) 5%, rgb(0 0 0 / 0.14) 9%,
+    rgb(0 0 0 / 0.38) 14%, rgb(0 0 0 / 0.74) 19%, #000 25%, #000 100%;
+
+  -webkit-mask-image: linear-gradient(to bottom, var(--hero-ramp));
+  mask-image: linear-gradient(to bottom, var(--hero-ramp));
+}
+
+.hero-photo {
+  --photo-ramp: transparent 0%, rgb(0 0 0 / 0.08) 14%, rgb(0 0 0 / 0.4) 26%,
+    rgb(0 0 0 / 0.8) 38%, #000 50%, #000 100%;
+
+  -webkit-mask-image: linear-gradient(to bottom, var(--photo-ramp));
+  mask-image: linear-gradient(to bottom, var(--photo-ramp));
+}
+
+@media (min-width: 1024px) {
+  .hero-field {
+    -webkit-mask-image: linear-gradient(to right, var(--hero-ramp));
+    mask-image: linear-gradient(to right, var(--hero-ramp));
+  }
+
+  .hero-photo {
+    -webkit-mask-image: linear-gradient(to right, var(--photo-ramp));
+    mask-image: linear-gradient(to right, var(--photo-ramp));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Entrance choreography (first paint, hero only)
+--------------------------------------------------------------------------- */
+
+@keyframes spyke-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes spyke-mask {
+  from {
+    transform: translate3d(0, 108%, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes spyke-field {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes spyke-field-v {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes spyke-settle {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes spyke-drop {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes spyke-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes spyke-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-rise {
+  animation: spyke-rise 720ms var(--ease-spatial) both;
+}
+
+.animate-mask {
+  animation: spyke-mask 900ms var(--ease-spatial) both;
+}
+
+.animate-field {
+  animation: spyke-field-v 1100ms var(--ease-spatial) both;
+}
+
+@media (min-width: 1024px) {
+  .animate-field {
+    animation-name: spyke-field;
+  }
+}
+
+.animate-settle {
+  animation: spyke-settle 2200ms var(--ease-spatial) both;
+}
+
+.animate-drop {
+  animation: spyke-drop 900ms var(--ease-spatial) both;
+  transform-origin: top;
+}
+
+.animate-grow {
+  animation: spyke-grow 900ms var(--ease-spatial) both;
+  transform-origin: left;
+}
+
+.animate-fade {
+  animation: spyke-fade 900ms var(--ease-swift) both;
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll reveal
+   Elements opt in with [data-reveal]; RevealObserver adds .is-out to the ones
+   still below the fold and removes it as they arrive. Nothing is hidden by the
+   stylesheet alone, so the page is complete without JavaScript.
+--------------------------------------------------------------------------- */
+
+[data-reveal] {
+  transition:
+    opacity 780ms var(--ease-spatial),
+    transform 780ms var(--ease-spatial),
+    clip-path 900ms var(--ease-spatial);
+  transition-delay: var(--rd, 0ms);
+}
+
+[data-reveal].is-out {
+  will-change: opacity, transform;
+}
+
+[data-reveal="up"].is-out {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+}
+
+[data-reveal="fade"].is-out {
+  opacity: 0;
+}
+
+[data-reveal="mask"].is-out {
+  clip-path: inset(0 100% 0 0);
+}
+
+[data-reveal="line"] {
+  transform-origin: left center;
+}
+
+[data-reveal="line"].is-out {
+  transform: scaleX(0);
+}
+
+[data-reveal="line-y"] {
+  transform-origin: top center;
+}
+
+[data-reveal="line-y"].is-out {
+  transform: scaleY(0);
+}
+
+[data-reveal="scale"].is-out {
+  opacity: 0;
+  transform: scale(1.04);
+}
+
+[data-rd="1"] {
+  --rd: 70ms;
+}
+[data-rd="2"] {
+  --rd: 140ms;
+}
+[data-rd="3"] {
+  --rd: 210ms;
+}
+[data-rd="4"] {
+  --rd: 280ms;
+}
+[data-rd="5"] {
+  --rd: 350ms;
+}
+[data-rd="6"] {
+  --rd: 420ms;
+}
+[data-rd="7"] {
+  --rd: 490ms;
+}
+[data-rd="8"] {
+  --rd: 560ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal].is-out {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Small shared behaviours
+--------------------------------------------------------------------------- */
+
+/* Dim siblings while any item in the list is hovered. */
+.archive:hover .archive-item {
+  opacity: 0.55;
+  transition: opacity 320ms var(--ease-swift);
+}
+
+.archive .archive-item:hover,
+.archive .archive-item:focus-within {
+  opacity: 1;
+}
+
+/* Underline that draws from the left on hover. */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background: var(--color-red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 380ms var(--ease-spatial);
+}
+
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
 }

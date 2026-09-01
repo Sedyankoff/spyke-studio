@@ -2,33 +2,29 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-all duration-300 disabled:pointer-events-none disabled:opacity-50",
+  "group inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-200 ease-[var(--ease-swift)] active:translate-y-px disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        primary:
-          "bg-foreground text-background hover:bg-white hover:shadow-[0_0_36px_rgba(255,255,255,0.16)]",
+        solid: "bg-ink text-paper hover:bg-red",
         outline:
-          "border border-white/15 bg-white/[0.02] text-foreground hover:border-white/30 hover:bg-white/[0.06]",
-        ghost: "text-muted hover:text-foreground",
+          "border border-line bg-transparent text-ink hover:border-ink hover:bg-ink hover:text-paper",
+        invert: "bg-paper text-ink hover:bg-red hover:text-paper",
+        invertOutline:
+          "border border-line-invert text-paper hover:border-paper hover:bg-paper hover:text-ink",
       },
       size: {
-        sm: "h-9 px-4 text-xs",
+        sm: "h-9 px-4 text-[13px]",
         md: "h-11 px-6 text-sm",
-        lg: "h-12 px-7 text-sm",
+        lg: "h-13 px-7 text-[15px]",
       },
     },
-    defaultVariants: {
-      variant: "primary",
-      size: "md",
-    },
+    defaultVariants: { variant: "solid", size: "md" },
   },
 );
 
-interface ButtonProps
-  extends
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof buttonVariants>;
 
 export function Button({ className, variant, size, ...props }: ButtonProps) {
   return (
@@ -39,10 +35,8 @@ export function Button({ className, variant, size, ...props }: ButtonProps) {
   );
 }
 
-interface ButtonLinkProps
-  extends
-    React.AnchorHTMLAttributes<HTMLAnchorElement>,
-    VariantProps<typeof buttonVariants> {}
+type ButtonLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> &
+  VariantProps<typeof buttonVariants>;
 
 export function ButtonLink({
   className,
@@ -51,9 +45,6 @@ export function ButtonLink({
   ...props
 }: ButtonLinkProps) {
   return (
-    <a
-      className={cn(buttonVariants({ variant, size }), className)}
-      {...props}
-    />
+    <a className={cn(buttonVariants({ variant, size }), className)} {...props} />
   );
 }
