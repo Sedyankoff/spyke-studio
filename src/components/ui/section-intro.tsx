@@ -2,8 +2,7 @@ import { cn } from "@/lib/utils";
 
 interface SectionIntroProps {
   titleId: string;
-  /** Two-digit section index, matching the navigation. */
-  index?: string;
+  /** Short section name, matching the navigation. Omitted when it would only repeat the title. */
   eyebrow: string;
   title: string;
   lead?: string;
@@ -13,7 +12,6 @@ interface SectionIntroProps {
 
 export function SectionIntro({
   titleId,
-  index,
   eyebrow,
   title,
   lead,
@@ -21,6 +19,7 @@ export function SectionIntro({
   className,
 }: SectionIntroProps) {
   const isInk = tone === "ink";
+  const showEyebrow = eyebrow.toLocaleLowerCase() !== title.toLocaleLowerCase();
 
   return (
     <div className={className}>
@@ -29,29 +28,25 @@ export function SectionIntro({
         className={cn("h-px w-full", isInk ? "bg-line" : "bg-line-invert")}
       />
 
-      <div className="mt-5 flex items-center gap-3.5">
-        {index && (
-          <span className={cn("meta", isInk ? "text-red-deep" : "text-red-light")}>
-            {index}
-          </span>
-        )}
-        <span
-          aria-hidden="true"
-          className={cn("h-2.5 w-px", isInk ? "bg-line" : "bg-line-invert")}
-        />
-        <span
-          className={cn("meta", isInk ? "text-ink-mute" : "text-paper/40")}
+      {showEyebrow && (
+        <p
+          className={cn(
+            "meta mt-5 flex items-center gap-3",
+            isInk ? "text-ink-mute" : "text-paper/45",
+          )}
         >
+          <span aria-hidden="true" className="h-px w-6 bg-red" />
           {eyebrow}
-        </span>
-      </div>
+        </p>
+      )}
 
       <h2
         id={titleId}
         data-reveal="up"
         data-rd="1"
         className={cn(
-          "display-section mt-5 max-w-3xl",
+          "display-section max-w-3xl",
+          showEyebrow ? "mt-5" : "mt-8",
           isInk ? "text-ink" : "text-paper",
         )}
       >

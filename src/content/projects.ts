@@ -3,6 +3,7 @@ import type { Project } from "@/content/schema";
 export const projects: Project[] = [
   {
     id: "spyke-commerce",
+    glyph: "SC",
     period: { from: "2024", ongoing: true },
     tech: [
       "Next.js",
@@ -44,9 +45,11 @@ export const projects: Project[] = [
   },
   {
     id: "gnc-bulgaria",
+    glyph: "GNC",
     period: { from: "2025" },
     url: "https://www.gnc.bg",
     urlLabel: "gnc.bg",
+    embedUrl: "https://www.gnc.bg",
     tech: [
       "Next.js",
       "React",
@@ -75,6 +78,7 @@ export const projects: Project[] = [
   },
   {
     id: "bookapart",
+    glyph: "BA",
     period: { from: "2025" },
     tech: [
       "Next.js",
@@ -122,6 +126,7 @@ export const projects: Project[] = [
   },
   {
     id: "spyke-arbix",
+    glyph: "SA",
     tech: [
       "Go",
       "React",

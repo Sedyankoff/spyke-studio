@@ -16,36 +16,61 @@ interface SiteHeaderProps {
   common: Dictionary["common"];
 }
 
+/**
+ * Three equal-weight columns: the outer two are `1fr` each, so the logo sits
+ * on the viewport's centre line regardless of what the side controls contain.
+ *
+ * The header reads the surface beneath it — any element marked
+ * `data-tone="dark"` — and switches between ink and paper treatments.
+ */
 export function SiteHeader({ locale, nav, common }: SiteHeaderProps) {
   const { open, toggleCommand, activeSection } = useCommand();
   const [scrolled, setScrolled] = useState(false);
+  const [dark, setDark] = useState(true);
+  const headerRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);
   const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const onScroll = () => {
-      if (frameRef.current !== null) return;
+    const darkSurfaces = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-tone="dark"]'),
+    );
 
-      frameRef.current = requestAnimationFrame(() => {
-        frameRef.current = null;
-        const { scrollTop, scrollHeight, clientHeight } =
-          document.documentElement;
-        setScrolled(scrollTop > 16);
+    const measure = () => {
+      frameRef.current = null;
+      const { scrollTop, scrollHeight, clientHeight } =
+        document.documentElement;
+      setScrolled(scrollTop > 16);
 
-        const travel = scrollHeight - clientHeight;
-        const progress = travel > 0 ? Math.min(1, scrollTop / travel) : 0;
-        progressRef.current?.style.setProperty(
-          "transform",
-          `scaleX(${progress.toFixed(4)})`,
-        );
-      });
+      const probe = (headerRef.current?.offsetHeight ?? 72) / 2;
+      setDark(
+        darkSurfaces.some((surface) => {
+          const rect = surface.getBoundingClientRect();
+          return rect.top <= probe && rect.bottom > probe;
+        }),
+      );
+
+      const travel = scrollHeight - clientHeight;
+      const progress = travel > 0 ? Math.min(1, scrollTop / travel) : 0;
+      progressRef.current?.style.setProperty(
+        "transform",
+        `scaleX(${progress.toFixed(4)})`,
+      );
     };
 
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    const schedule = () => {
+      if (frameRef.current === null) {
+        frameRef.current = requestAnimationFrame(measure);
+      }
+    };
+
+    measure();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
       frameRef.current = null;
     };
@@ -58,62 +83,107 @@ export function SiteHeader({ locale, nav, common }: SiteHeaderProps) {
 
   return (
     <header
+      ref={headerRef}
       inert={open}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300",
-        scrolled
-          ? "border-b border-line-soft bg-paper/88 backdrop-blur-md"
-          : "border-b border-transparent",
+        "fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color] duration-300",
+        !scrolled && "border-transparent",
+        scrolled && dark && "border-line-invert-soft bg-ink/80 backdrop-blur-md",
+        scrolled && !dark && "border-line-soft bg-paper/85 backdrop-blur-md",
       )}
     >
-      <div className="flex items-center justify-between gap-4 px-5 py-3 sm:px-8 sm:py-3.5">
+      {/* More air above the logo at the top of the page; compact once scrolled. */}
+      <div
+        className={cn(
+          "grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 transition-[padding] duration-300 sm:px-8",
+          scrolled ? "py-3" : "pt-5 pb-3 sm:pt-6 lg:pt-7",
+        )}
+      >
+        <LocaleSwitch
+          locale={locale}
+          label={common.switchLanguage}
+          tone={dark ? "paper" : "ink"}
+          className="justify-self-start"
+        />
+
         <a
           href="#hero"
           aria-label={siteConfig.name}
-          className="h-7 rounded-sm sm:h-8"
+          className={cn(
+            "relative block h-9 rounded-sm transition-opacity duration-300 sm:h-11 lg:h-[3.375rem]",
+            // Below ~1000px the open panel would cut through the logo; it shows its own.
+            open && "max-[999px]:opacity-0",
+          )}
         >
-          <SpykeLogo eager sizes="150px" />
+          <SpykeLogo
+            eager
+            sizes="(min-width: 1024px) 160px, 130px"
+            className={cn(
+              "transition-opacity duration-300",
+              dark ? "opacity-0" : "opacity-100",
+            )}
+          />
+          <SpykeLogo
+            eager
+            tone="paper"
+            sizes="(min-width: 1024px) 160px, 130px"
+            className={cn(
+              "absolute inset-0 transition-opacity duration-300",
+              dark ? "opacity-100" : "opacity-0",
+            )}
+          />
         </a>
 
-        <div className="flex items-center gap-2">
-          <LocaleSwitch locale={locale} label={common.switchLanguage} />
+        <button
+          type="button"
+          onClick={toggleCommand}
+          aria-expanded={open}
+          aria-controls="spyke-command-panel"
+          aria-label={nav.open}
+          className={cn(
+            "group flex h-11 items-center gap-3 justify-self-end rounded-full border py-1 pr-1 pl-1 transition-colors duration-300 sm:pl-4",
+            dark
+              ? "border-line-invert hover:border-paper/60"
+              : "border-line bg-paper-raised hover:border-ink",
+          )}
+        >
+          <span className="hidden h-[18px] overflow-hidden sm:block">
+            <AnimatePresence mode="wait" initial={false}>
+              <m.span
+                key={currentLabel}
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: "-100%", opacity: 0 }}
+                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                className={cn(
+                  "meta block leading-[18px] whitespace-nowrap transition-colors duration-300",
+                  dark
+                    ? "text-paper/65 group-hover:text-paper"
+                    : "text-ink-mute group-hover:text-ink",
+                )}
+              >
+                {currentLabel}
+              </m.span>
+            </AnimatePresence>
+          </span>
 
-          <button
-            type="button"
-            onClick={toggleCommand}
-            aria-expanded={open}
-            aria-controls="spyke-command-panel"
-            aria-label={nav.open}
-            className="group flex h-11 items-center gap-3 rounded-full border border-line bg-paper-raised py-1 pr-1 pl-4 transition-colors duration-200 hover:border-ink"
+          <span
+            className={cn(
+              "relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full transition-colors duration-300",
+              dark ? "bg-paper text-ink" : "bg-ink text-paper",
+            )}
           >
-            <span className="hidden h-[18px] overflow-hidden sm:block">
-              <AnimatePresence mode="wait" initial={false}>
-                <m.span
-                  key={currentLabel}
-                  initial={{ y: "100%", opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: "-100%", opacity: 0 }}
-                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                  className="meta block leading-[18px] whitespace-nowrap text-ink-mute transition-colors duration-200 group-hover:text-ink"
-                >
-                  {currentLabel}
-                </m.span>
-              </AnimatePresence>
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 scale-0 rounded-full bg-red transition-transform duration-[420ms] ease-[var(--ease-spatial)] group-hover:scale-100"
+            />
+            <span className="relative flex w-4 flex-col items-end gap-[3px] transition-colors duration-200 group-hover:text-paper">
+              <span className="h-[2px] w-full rounded-full bg-current" />
+              <span className="h-[2px] w-2/3 rounded-full bg-current transition-[width] duration-300 ease-[var(--ease-spatial)] group-hover:w-full" />
+              <span className="h-[2px] w-1/3 rounded-full bg-current transition-[width] delay-75 duration-300 ease-[var(--ease-spatial)] group-hover:w-full" />
             </span>
-
-            <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-ink text-paper">
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 scale-0 rounded-full bg-red transition-transform duration-[420ms] ease-[var(--ease-spatial)] group-hover:scale-100"
-              />
-              <span className="relative flex w-4 flex-col items-end gap-[3px]">
-                <span className="h-[2px] w-full rounded-full bg-current" />
-                <span className="h-[2px] w-2/3 rounded-full bg-current transition-[width] duration-300 ease-[var(--ease-spatial)] group-hover:w-full" />
-                <span className="h-[2px] w-1/3 rounded-full bg-current transition-[width] delay-75 duration-300 ease-[var(--ease-spatial)] group-hover:w-full" />
-              </span>
-            </span>
-          </button>
-        </div>
+          </span>
+        </button>
       </div>
 
       {/* Reading progress — the header's only piece of red. */}

@@ -1,7 +1,7 @@
-import { Mail } from "lucide-react";
+import { Globe, Mail } from "lucide-react";
 import { socialLinks } from "@/content/site";
 import { cn } from "@/lib/utils";
-import { GitHubIcon, InstagramIcon, LinkedInIcon } from "@/components/ui/icons";
+import { GitHubIcon, LinkedInIcon } from "@/components/ui/icons";
 import type { SocialPlatform } from "@/content/schema";
 
 const platformIcons: Record<
@@ -10,7 +10,7 @@ const platformIcons: Record<
 > = {
   github: GitHubIcon,
   linkedin: LinkedInIcon,
-  instagram: InstagramIcon,
+  portfolio: Globe,
   email: Mail,
 };
 
@@ -24,6 +24,7 @@ export function SocialLinks({
   return (
     <ul className={cn("flex items-center gap-2", className)}>
       {socialLinks.map((link) => {
+        if (!link.href) return null;
         const Icon = platformIcons[link.platform];
         const isExternal = link.platform !== "email";
 

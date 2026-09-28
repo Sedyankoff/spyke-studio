@@ -20,29 +20,32 @@ export interface Dictionary {
     close: string;
     languageLabel: string;
     switchLanguage: string;
+    /** Short month names, January first. */
+    months: string[];
   };
   nav: {
     label: string;
     open: string;
     close: string;
     sectionsLabel: string;
-    previewLabel: string;
     items: Record<NavSectionId, { label: string; hint: string }>;
   };
   hero: {
+    /** Name and title, above the headline. */
     eyebrow: string;
-    role: string;
+    location: string;
     statement: string;
+    /** `statement`, word for word, with the display line breaks chosen by hand. */
+    statementLines: string[];
     lead: string;
     primaryCta: string;
     secondaryCta: string;
-    scroll: string;
   };
   about: {
     eyebrow: string;
     name: string;
     role: string;
-    studio: string;
+    location: string;
     paragraphs: string[];
     factsLabel: string;
     facts: { label: string; value: string }[];
@@ -53,6 +56,8 @@ export interface Dictionary {
     title: string;
     lead: string;
     groups: Record<StackGroupId, string>;
+    /** Marks the primary stack (C#/.NET, React/TypeScript). */
+    primaryLabel: string;
     capabilitiesTitle: string;
     capabilities: Record<CapabilityId, string>;
   };
@@ -61,18 +66,18 @@ export interface Dictionary {
     title: string;
     lead: string;
     open: string;
-    viewCase: string;
     closeProject: string;
-    indexLabel: string;
+    workstationLabel: string;
+    liveView: string;
+    openLive: string;
+    previousImage: string;
+    nextImage: string;
     categoryLabel: string;
     roleLabel: string;
     statusLabel: string;
     techLabel: string;
     overviewLabel: string;
     liveLabel: string;
-    galleryLabel: string;
-    previousImage: string;
-    nextImage: string;
     dataPathLabel: string;
     dataPath: string[];
     projects: Record<ProjectId, ProjectCopy>;
@@ -80,40 +85,49 @@ export interface Dictionary {
   experience: {
     eyebrow: string;
     title: string;
-    professional: string;
+    areasLabel: string;
     entries: Record<
       string,
-      { role: string; company: string; summary: string; tags: string[] }
+      {
+        role: string;
+        company: string;
+        location: string;
+        summary: string;
+        /** The primary technologies of the role. */
+        tags: string[];
+        /** Further areas of experience, listed quietly after the tags. */
+        areas?: string[];
+      }
     >;
   };
   education: {
     eyebrow: string;
     title: string;
     academic: string;
-    additional: string;
+    statusTitle: string;
+    standingLabel: string;
+    periodLabel: string;
+    expectedLabel: string;
     entries: Record<
       string,
       {
         degree: string;
         institution: string;
         summary: string;
-        focus: string[];
+        /** Year of study, e.g. "Final year". */
+        standing: string;
       }
     >;
-    languagesLabel: string;
-    languages: { name: string; level?: string }[];
-    licenceLabel: string;
-    licenceValue: string;
   };
   contact: {
     eyebrow: string;
     title: string;
     lead: string;
     emailLabel: string;
+    phoneLabel: string;
     copyEmail: string;
     emailCopied: string;
     elsewhereLabel: string;
-    availability: string;
     form: {
       name: string;
       namePlaceholder: string;
@@ -128,6 +142,8 @@ export interface Dictionary {
     };
   };
   footer: {
+    /** Copyright holder. */
+    owner: string;
     tagline: string;
     rights: string;
     builtBy: string;

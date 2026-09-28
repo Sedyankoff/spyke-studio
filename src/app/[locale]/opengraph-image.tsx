@@ -90,7 +90,7 @@ export default async function OpenGraphImage({
           }}
         >
           <div style={{ display: "flex" }}>
-            TypeScript · .NET · Go · Azure
+            C#/.NET · React · TypeScript
           </div>
           <div style={{ display: "flex" }}>spyke.studio</div>
         </div>

@@ -11,12 +11,13 @@ export type SectionId =
 
 export type NavSectionId = Exclude<SectionId, "hero">;
 
-export type SocialPlatform = "github" | "linkedin" | "instagram" | "email";
+export type SocialPlatform = "github" | "linkedin" | "portfolio" | "email";
 
 export interface SocialLink {
   platform: SocialPlatform;
   label: string;
-  href: string;
+  /** `null` until the real address is known — such links are not rendered. */
+  href: string | null;
 }
 
 export type ProjectId =
@@ -33,6 +34,7 @@ export interface ProjectImage {
   kind: "desktop" | "mobile";
 }
 
+/** `from` / `to` are `YYYY` or `YYYY-MM`. */
 export interface Period {
   from: string;
   to?: string;
@@ -41,9 +43,19 @@ export interface Period {
 
 export interface Project {
   id: ProjectId;
+  /** Monogram drawn on the project's desktop icon. */
+  glyph: string;
   period?: Period;
+  /** The running product, opened in a new tab. */
   url?: string;
   urlLabel?: string;
+  /**
+   * Address for the live, interactive preview inside the workstation. Only
+   * set it for a site that may be framed. The build still checks the site's
+   * response headers (`X-Frame-Options`, CSP `frame-ancestors`) and quietly
+   * falls back to the screenshots if framing is refused.
+   */
+  embedUrl?: string;
   tech: string[];
   images: ProjectImage[];
 }
@@ -63,13 +75,19 @@ export type StackGroupId =
   | "frontend"
   | "backend"
   | "data"
-  | "cloud";
+  | "cloud"
+  | "delivery"
+  | "realtime"
+  | "observability";
 
 export interface StackTechnology {
   id: string;
   name: string;
-  icon: BrandIconId;
+  /** Brand mark; technologies without one get a neutral line icon. */
+  icon?: BrandIconId;
   note?: string;
+  /** Part of the primary stack: C#/.NET and React/TypeScript. */
+  primary?: boolean;
 }
 
 export interface StackGroup {
@@ -79,11 +97,11 @@ export interface StackGroup {
 
 export type CapabilityId =
   | "rest"
-  | "websockets"
   | "auth"
+  | "rbac"
   | "multitenancy"
-  | "realtime"
   | "integrations"
+  | "realtime"
   | "cicd";
 
 export interface ExperienceEntry {
@@ -94,4 +112,5 @@ export interface ExperienceEntry {
 export interface EducationEntry {
   id: string;
   period: Period;
+  expectedGraduation?: string;
 }

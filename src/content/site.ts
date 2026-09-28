@@ -10,10 +10,9 @@ export const siteConfig = {
   name: "Spyke Studio",
   url: "https://spyke.studio",
   email: "stoil0878@gmail.com",
+  /** Display form and dialable form of the same number. */
+  phone: { display: "+359 878 245 747", href: "tel:+359878245747" },
   timeZone: "Europe/Sofia",
-  /** Plovdiv, Bulgaria — printed as hero metadata. */
-  coordinates: "42.1354° N, 24.7453° E",
-  founded: "2024",
   person: {
     givenName: "Stoil",
     familyName: "Sedyankov",
@@ -22,6 +21,12 @@ export const siteConfig = {
     src: "/images/hero.webp",
     width: 1080,
     height: 1440,
+    /**
+     * `object-position` for the full-bleed crop: which part of the photograph
+     * stays in frame. Tuned for this image (horizon, landscape and figure in
+     * the lower half); adjust it when the production photograph lands.
+     */
+    focus: "48% 76%",
   },
 } as const;
 
@@ -38,22 +43,14 @@ export const brandAssets = {
 
 export const portrait: ImageAsset | null = null;
 
+/**
+ * Professional profiles. An `href` of `null` is a placeholder: the link is
+ * not rendered anywhere until a real address is filled in here.
+ */
 export const socialLinks: SocialLink[] = [
-  {
-    platform: "github",
-    label: "GitHub",
-    href: "https://github.com/stoilsedyankov",
-  },
-  {
-    platform: "linkedin",
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/stoilsedyankov",
-  },
-  {
-    platform: "instagram",
-    label: "Instagram",
-    href: "https://www.instagram.com/spyke.studio",
-  },
+  { platform: "linkedin", label: "LinkedIn", href: null },
+  { platform: "github", label: "GitHub", href: null },
+  { platform: "portfolio", label: "Portfolio", href: null },
   {
     platform: "email",
     label: "Email",

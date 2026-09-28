@@ -1,11 +1,15 @@
 import type { EducationEntry, ExperienceEntry } from "@/content/schema";
 
+/** Dates are `YYYY-MM`; the copy for each entry lives in the dictionaries. */
 export const experienceEntries: ExperienceEntry[] = [
-  { id: "spyke-studio", period: { from: "2024", ongoing: true } },
-  { id: "gnc", period: { from: "2025" } },
-  { id: "freelance", period: { from: "2022", to: "2024" } },
+  { id: "orak", period: { from: "2024-05", ongoing: true } },
+  { id: "skai", period: { from: "2022-06", to: "2022-08" } },
 ];
 
 export const educationEntries: EducationEntry[] = [
-  { id: "plovdiv", period: { from: "2021", to: "2025" } },
+  {
+    id: "plovdiv",
+    period: { from: "2023-10", ongoing: true },
+    expectedGraduation: "2027",
+  },
 ];

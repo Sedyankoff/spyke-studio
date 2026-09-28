@@ -7,7 +7,9 @@ import { Hero } from "@/components/sections/hero";
 import { Stack } from "@/components/sections/stack";
 import { Work } from "@/components/sections/work";
 import { getDictionary } from "@/content";
+import { projects } from "@/content/projects";
 import { isLocale } from "@/i18n/config";
+import { embeddableProjects } from "@/lib/embed";
 import { notFound } from "next/navigation";
 
 export default async function HomePage(props: PageProps<"/[locale]">) {
@@ -16,6 +18,7 @@ export default async function HomePage(props: PageProps<"/[locale]">) {
 
   const dictionary = getDictionary(locale);
   const present = dictionary.common.present;
+  const embeddable = await embeddableProjects(projects);
 
   return (
     <>
@@ -23,10 +26,14 @@ export default async function HomePage(props: PageProps<"/[locale]">) {
         <Hero copy={dictionary.hero} />
         <About copy={dictionary.about} />
         <Stack copy={dictionary.stack} />
-        <Work copy={dictionary.work} present={present} />
-        <Experience copy={dictionary.experience} present={present} />
-        <Education copy={dictionary.education} present={present} />
-        <Contact copy={dictionary.contact} />
+        <Work
+          copy={dictionary.work}
+          present={present}
+          embeddable={embeddable}
+        />
+        <Experience copy={dictionary.experience} common={dictionary.common} />
+        <Education copy={dictionary.education} common={dictionary.common} />
+        <Contact copy={dictionary.contact} identity={dictionary.about} />
       </main>
       <Footer
         copy={dictionary.footer}

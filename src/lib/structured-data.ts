@@ -6,7 +6,6 @@ import { htmlLang, type Locale } from "@/i18n/config";
 
 export function buildStructuredData(locale: Locale, dictionary: Dictionary) {
   const personId = `${siteConfig.url}/#person`;
-  const organizationId = `${siteConfig.url}/#organization`;
   const fullName = `${siteConfig.person.givenName} ${siteConfig.person.familyName}`;
 
   return {
@@ -21,28 +20,28 @@ export function buildStructuredData(locale: Locale, dictionary: Dictionary) {
         familyName: siteConfig.person.familyName,
         jobTitle: dictionary.about.role,
         email: `mailto:${siteConfig.email}`,
+        telephone: siteConfig.phone.display,
         url: `${siteConfig.url}/${locale}`,
         knowsAbout: stackGroups.flatMap((group) =>
           group.technologies.map((technology) => technology.name),
         ),
-        alumniOf: educationEntries.map((entry) => ({
+        worksFor: {
+          "@type": "Organization",
+          name: dictionary.experience.entries.orak.company,
+        },
+        // Currently enrolled — an affiliation, not (yet) an alumnus.
+        affiliation: educationEntries.map((entry) => ({
           "@type": "CollegeOrUniversity",
           name: dictionary.education.entries[entry.id].institution,
         })),
-        worksFor: { "@id": organizationId },
-        address: { "@type": "PostalAddress", addressCountry: "BG" },
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: locale === "bg" ? "Пловдив" : "Plovdiv",
+          addressCountry: "BG",
+        },
         sameAs: socialLinks
-          .filter((link) => link.platform !== "email")
+          .filter((link) => link.platform !== "email" && link.href)
           .map((link) => link.href),
-      },
-      {
-        "@type": "Organization",
-        "@id": organizationId,
-        name: siteConfig.name,
-        url: siteConfig.url,
-        logo: `${siteConfig.url}/images/icons/icon-512.png`,
-        founder: { "@id": personId },
-        foundingDate: "2024",
       },
       {
         "@type": "WebSite",
@@ -50,7 +49,7 @@ export function buildStructuredData(locale: Locale, dictionary: Dictionary) {
         url: siteConfig.url,
         name: siteConfig.name,
         description: dictionary.meta.description,
-        publisher: { "@id": organizationId },
+        author: { "@id": personId },
         inLanguage: htmlLang[locale],
       },
     ],

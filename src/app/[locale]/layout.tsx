@@ -8,7 +8,6 @@ import { SiteHeader } from "@/components/command/site-header";
 import { MotionProvider } from "@/components/providers/motion-provider";
 import { RevealObserver } from "@/components/providers/reveal-observer";
 import { getDictionary } from "@/content";
-import { buildNavPreview } from "@/content/nav-preview";
 import { siteConfig } from "@/content/site";
 import {
   htmlLang,
@@ -111,7 +110,6 @@ export default async function LocaleLayout(props: LayoutProps<"/[locale]">) {
   if (!isLocale(locale)) notFound();
 
   const dictionary = getDictionary(locale as Locale);
-  const navPreview = buildNavPreview(dictionary, siteConfig.email);
 
   return (
     <html
@@ -136,7 +134,6 @@ export default async function LocaleLayout(props: LayoutProps<"/[locale]">) {
               locale={locale as Locale}
               nav={dictionary.nav}
               common={dictionary.common}
-              preview={navPreview}
             />
             <div id="site-shell">
               <PageShell>{props.children}</PageShell>
@@ -145,7 +142,6 @@ export default async function LocaleLayout(props: LayoutProps<"/[locale]">) {
         </MotionProvider>
 
         <RevealObserver />
-
 
         <script
           type="application/ld+json"

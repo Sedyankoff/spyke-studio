@@ -15,6 +15,8 @@
   --color-red-deep: #b30f18;
   --color-red-light: #ff5f5a;
   --color-red-tint: #fbe7e4;
+  /* The brand red, deepened just enough to carry white 15px text at AA. */
+  --color-red-action: #d90616;
 
   --color-line: rgb(27 25 23 / 0.14);
   --color-line-soft: rgb(27 25 23 / 0.07);
@@ -38,6 +40,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -64,6 +67,11 @@
     text-wrap: balance;
   }
 
+  /* Sections take focus after navigation; the move itself is the indicator. */
+  [data-section]:focus {
+    outline: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -82,18 +90,21 @@
 @layer components {
   .display-hero,
   .display-section,
-  .display-statement,
-  .display-card,
-  .display-index {
+  .display-card {
     font-family: var(--font-display);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: -0.005em;
   }
 
+  /* Lines are broken by hand; the size is bounded by height as well so the
+     longest line never crowds a short or narrow viewport. */
+  /* Leading leaves room for Cyrillic descenders (Д, Ц, Щ) and the comma, so
+     no line's feet ever reach the caps of the line below. */
   .display-hero {
-    font-size: clamp(2.75rem, 7.4vw, 7rem);
-    line-height: 0.94;
+    font-size: clamp(2.375rem, min(5.6vw, 9.2svh), 5.625rem);
+    line-height: 1.02;
+    letter-spacing: 0;
   }
 
   .display-section {
@@ -101,21 +112,9 @@
     line-height: 0.98;
   }
 
-  .display-statement {
-    font-size: clamp(1.625rem, 3.1vw, 2.875rem);
-    line-height: 1.02;
-  }
-
   .display-card {
     font-size: clamp(1.375rem, 2.3vw, 2rem);
     line-height: 1.02;
-  }
-
-  /* Oversized editorial index numbers (project 01, 02 …). */
-  .display-index {
-    font-size: clamp(2.5rem, 5.6vw, 4.75rem);
-    line-height: 0.78;
-    letter-spacing: -0.02em;
   }
 
   .eyebrow {
@@ -208,37 +207,105 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Hero composition
-   The photograph lives inside a dark field that dissolves into the paper
-   background: vertically on small screens, horizontally from lg upwards.
+   Hero
+   The plate is the photograph: full height, anchored right, at least 80% of
+   the width and wider only when the image's own proportions call for it. On
+   landscape screens its leading edge falls away into the black of the
+   section, and a layered grade deepens the reading side. Black only —
+   nothing is lightened, nothing is blurred.
 --------------------------------------------------------------------------- */
 
-.hero-field {
-  --hero-ramp: transparent 0%, rgb(0 0 0 / 0.04) 5%, rgb(0 0 0 / 0.14) 9%,
-    rgb(0 0 0 / 0.38) 14%, rgb(0 0 0 / 0.74) 19%, #000 25%, #000 100%;
-
-  -webkit-mask-image: linear-gradient(to bottom, var(--hero-ramp));
-  mask-image: linear-gradient(to bottom, var(--hero-ramp));
+/* The frame is a size container so the plate can be sized from its height. */
+.hero-frame {
+  container: hero / size;
 }
 
 .hero-photo {
-  --photo-ramp: transparent 0%, rgb(0 0 0 / 0.08) 14%, rgb(0 0 0 / 0.4) 26%,
-    rgb(0 0 0 / 0.8) 38%, #000 50%, #000 100%;
-
-  -webkit-mask-image: linear-gradient(to bottom, var(--photo-ramp));
-  mask-image: linear-gradient(to bottom, var(--photo-ramp));
+  filter: brightness(0.92) contrast(1.04) saturate(0.7);
 }
 
-@media (min-width: 1024px) {
-  .hero-field {
-    -webkit-mask-image: linear-gradient(to right, var(--hero-ramp));
-    mask-image: linear-gradient(to right, var(--hero-ramp));
-  }
+.hero-plate {
+  width: 100%;
+  width: min(100cqw, max(80cqw, 100cqh * var(--hero-ratio)));
+}
 
-  .hero-photo {
-    -webkit-mask-image: linear-gradient(to right, var(--photo-ramp));
-    mask-image: linear-gradient(to right, var(--photo-ramp));
+/* Landscape frames: a long, soft falloff from the plate into black. */
+@container hero (min-aspect-ratio: 1/1) {
+  .hero-plate {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgb(0 0 0 / 0.2) 8%,
+      rgb(0 0 0 / 0.55) 18%,
+      rgb(0 0 0 / 0.85) 28%,
+      #000 38%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgb(0 0 0 / 0.2) 8%,
+      rgb(0 0 0 / 0.55) 18%,
+      rgb(0 0 0 / 0.85) 28%,
+      #000 38%
+    );
   }
+}
+
+.hero-grade {
+  background:
+    /* Reading side: deep at the edge, easing out by the centre. */
+    linear-gradient(
+      90deg,
+      rgb(11 10 9 / 0.78) 0%,
+      rgb(11 10 9 / 0.62) 18%,
+      rgb(11 10 9 / 0.4) 34%,
+      rgb(11 10 9 / 0.16) 50%,
+      rgb(11 10 9 / 0.04) 62%,
+      rgb(11 10 9 / 0) 72%
+    ),
+    /* A soft pool behind the headline for bright passages of the image. */
+    radial-gradient(
+      50% 55% at 20% 52%,
+      rgb(11 10 9 / 0.22) 0%,
+      rgb(11 10 9 / 0) 100%
+    ),
+    /* A light base so highlights never blow out under white type. */
+    linear-gradient(rgb(11 10 9 / 0.1), rgb(11 10 9 / 0.1));
+}
+
+/* Portrait screens: the copy spans the width, so the grade runs top to bottom. */
+@media (max-width: 767px) {
+  .hero-grade {
+    background:
+      linear-gradient(
+        180deg,
+        rgb(11 10 9 / 0.55) 0%,
+        rgb(11 10 9 / 0.45) 40%,
+        rgb(11 10 9 / 0.26) 70%,
+        rgb(11 10 9 / 0.14) 100%
+      ),
+      linear-gradient(
+        90deg,
+        rgb(11 10 9 / 0.2) 0%,
+        rgb(11 10 9 / 0) 80%
+      );
+  }
+}
+
+/* Type over photography: a wide, faint shadow that only shows where the
+   image behind a letter is bright. */
+.hero-copy {
+  text-shadow: 0 2px 28px rgb(11 10 9 / 0.35);
+}
+
+/* A faint dark falloff at the top edge that seats the header controls. */
+.hero-top {
+  background: linear-gradient(
+    to bottom,
+    rgb(11 10 9 / 0.45) 0%,
+    rgb(11 10 9 / 0.18) 50%,
+    rgb(11 10 9 / 0) 100%
+  );
 }
 
 /* ---------------------------------------------------------------------------
@@ -256,60 +323,6 @@
   }
 }
 
-@keyframes spyke-mask {
-  from {
-    transform: translate3d(0, 108%, 0);
-  }
-  to {
-    transform: none;
-  }
-}
-
-@keyframes spyke-field {
-  from {
-    clip-path: inset(0 0 0 100%);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-@keyframes spyke-field-v {
-  from {
-    clip-path: inset(100% 0 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-@keyframes spyke-settle {
-  from {
-    transform: scale(1.08);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-@keyframes spyke-drop {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-
-@keyframes spyke-grow {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
 @keyframes spyke-fade {
   from {
     opacity: 0;
@@ -321,34 +334,6 @@
 
 .animate-rise {
   animation: spyke-rise 720ms var(--ease-spatial) both;
-}
-
-.animate-mask {
-  animation: spyke-mask 900ms var(--ease-spatial) both;
-}
-
-.animate-field {
-  animation: spyke-field-v 1100ms var(--ease-spatial) both;
-}
-
-@media (min-width: 1024px) {
-  .animate-field {
-    animation-name: spyke-field;
-  }
-}
-
-.animate-settle {
-  animation: spyke-settle 2200ms var(--ease-spatial) both;
-}
-
-.animate-drop {
-  animation: spyke-drop 900ms var(--ease-spatial) both;
-  transform-origin: top;
-}
-
-.animate-grow {
-  animation: spyke-grow 900ms var(--ease-spatial) both;
-  transform-origin: left;
 }
 
 .animate-fade {
@@ -365,8 +350,7 @@
 [data-reveal] {
   transition:
     opacity 780ms var(--ease-spatial),
-    transform 780ms var(--ease-spatial),
-    clip-path 900ms var(--ease-spatial);
+    transform 780ms var(--ease-spatial);
   transition-delay: var(--rd, 0ms);
 }
 
@@ -381,10 +365,6 @@
 
 [data-reveal="fade"].is-out {
   opacity: 0;
-}
-
-[data-reveal="mask"].is-out {
-  clip-path: inset(0 100% 0 0);
 }
 
 [data-reveal="line"] {
@@ -426,18 +406,11 @@
 [data-rd="6"] {
   --rd: 420ms;
 }
-[data-rd="7"] {
-  --rd: 490ms;
-}
-[data-rd="8"] {
-  --rd: 560ms;
-}
 
 @media (prefers-reduced-motion: reduce) {
   [data-reveal].is-out {
     opacity: 1;
     transform: none;
-    clip-path: none;
   }
 }
 

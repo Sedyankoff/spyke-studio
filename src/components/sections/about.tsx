@@ -1,11 +1,10 @@
-import { Building2, Layers, MapPin, Crosshair } from "lucide-react";
-import { SpykeMark } from "@/components/brand/spyke-logo";
+import { Crosshair, GraduationCap, Layers, MapPin } from "lucide-react";
 import { Section } from "@/components/layout/section";
 import { Container } from "@/components/ui/container";
 import type { Dictionary } from "@/content/dictionary";
 
 /** Facts are authored in a fixed order; the icons follow it. */
-const factIcons = [MapPin, Crosshair, Layers, Building2];
+const factIcons = [MapPin, Crosshair, Layers, GraduationCap];
 
 export function About({ copy }: { copy: Dictionary["about"] }) {
   return (
@@ -16,11 +15,10 @@ export function About({ copy }: { copy: Dictionary["about"] }) {
         <div className="mt-12 grid gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
           {/* Identity ----------------------------------------------------- */}
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <div className="flex items-center gap-3.5">
-              <span className="meta text-red-deep">01</span>
-              <span aria-hidden="true" className="h-2.5 w-px bg-line" />
-              <span className="meta text-ink-mute">{copy.eyebrow}</span>
-            </div>
+            <p className="meta flex items-center gap-3 text-ink-mute">
+              <span aria-hidden="true" className="h-px w-6 bg-red" />
+              {copy.eyebrow}
+            </p>
 
             <h2
               id="about-title"
@@ -30,49 +28,35 @@ export function About({ copy }: { copy: Dictionary["about"] }) {
               {copy.name}
             </h2>
 
-            <div
-              data-reveal="line"
-              data-rd="1"
-              className="mt-6 h-px w-16 bg-red"
-            />
-
             <p
               data-reveal="up"
-              data-rd="2"
+              data-rd="1"
               className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm"
             >
               <span className="font-medium text-ink">{copy.role}</span>
               <span aria-hidden="true" className="h-3 w-px bg-line" />
-              <span className="inline-flex items-center gap-2 text-ink-soft">
-                {copy.studio}
-                <span className="inline-block h-3.5">
-                  <SpykeMark sizes="16px" />
-                </span>
-              </span>
+              <span className="text-ink-soft">{copy.location}</span>
             </p>
           </div>
 
           {/* Narrative ---------------------------------------------------- */}
           <div>
-            <ol className="space-y-9">
+            <div className="max-w-2xl space-y-6">
               {copy.paragraphs.map((paragraph, index) => (
-                <li
+                <p
                   key={paragraph}
                   data-reveal="up"
                   data-rd={String(index + 1)}
-                  className="group grid gap-3 sm:grid-cols-[3.5rem_minmax(0,1fr)] sm:gap-6"
+                  className={
+                    index === 0
+                      ? "text-lg leading-relaxed font-medium text-ink sm:text-[1.3125rem]"
+                      : "body-lg text-ink-soft"
+                  }
                 >
-                  <span
-                    aria-hidden="true"
-                    className="flex items-center gap-2 pt-2 font-mono text-[11px] tracking-[0.14em] text-ink-mute sm:pt-2.5"
-                  >
-                    <span className="h-px w-3 bg-red transition-[width] duration-500 ease-[var(--ease-spatial)] group-hover:w-5" />
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <p className="body-lg text-ink-soft">{paragraph}</p>
-                </li>
+                  {paragraph}
+                </p>
               ))}
-            </ol>
+            </div>
 
             <div data-reveal="up" className="mt-14">
               <div className="flex items-center gap-3.5">

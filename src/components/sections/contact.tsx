@@ -6,11 +6,22 @@ import { Section } from "@/components/layout/section";
 import { Container } from "@/components/ui/container";
 import { SectionIntro } from "@/components/ui/section-intro";
 import { SocialLinks } from "@/components/ui/social-links";
-import { siteConfig } from "@/content/site";
+import { siteConfig, socialLinks } from "@/content/site";
 import type { Dictionary } from "@/content/dictionary";
 import { cn } from "@/lib/utils";
 
-export function Contact({ copy }: { copy: Dictionary["contact"] }) {
+interface ContactProps {
+  copy: Dictionary["contact"];
+  /** Name, title and location, shared with the About section. */
+  identity: Pick<Dictionary["about"], "name" | "role" | "location">;
+}
+
+/** Profile links render only once a real address is configured. */
+const hasProfiles = socialLinks.some(
+  (link) => link.platform !== "email" && link.href,
+);
+
+export function Contact({ copy, identity }: ContactProps) {
   return (
     <Section id="contact" labelledBy="contact-title" className="section-y">
       <Container>
@@ -18,13 +29,19 @@ export function Contact({ copy }: { copy: Dictionary["contact"] }) {
           <div>
             <SectionIntro
               titleId="contact-title"
-              index="06"
               eyebrow={copy.eyebrow}
               title={copy.title}
               lead={copy.lead}
             />
 
             <div data-reveal="up" className="mt-12">
+              <p className="text-lg font-medium text-ink">{identity.name}</p>
+              <p className="mt-1 text-sm text-ink-soft">
+                {identity.role} · {identity.location}
+              </p>
+            </div>
+
+            <div data-reveal="up" className="mt-10">
               <p className="eyebrow text-ink-mute">{copy.emailLabel}</p>
               <div className="mt-3.5 flex flex-wrap items-center gap-3">
                 <a
@@ -37,22 +54,22 @@ export function Contact({ copy }: { copy: Dictionary["contact"] }) {
               </div>
             </div>
 
-            <div data-reveal="up" data-rd="1" className="mt-10">
-              <p className="eyebrow text-ink-mute">{copy.elsewhereLabel}</p>
-              <SocialLinks className="mt-3.5" />
+            <div data-reveal="up" data-rd="1" className="mt-8">
+              <p className="eyebrow text-ink-mute">{copy.phoneLabel}</p>
+              <a
+                href={siteConfig.phone.href}
+                className="link-underline mt-3.5 inline-block text-lg font-medium text-ink sm:text-xl"
+              >
+                {siteConfig.phone.display}
+              </a>
             </div>
 
-            <p
-              data-reveal="up"
-              data-rd="2"
-              className="mt-10 inline-flex items-center gap-2.5 rounded-full border border-line bg-paper-raised px-4 py-2 text-xs text-ink-soft"
-            >
-              <span aria-hidden="true" className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red/70" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-red" />
-              </span>
-              {copy.availability}
-            </p>
+            {hasProfiles && (
+              <div data-reveal="up" data-rd="2" className="mt-8">
+                <p className="eyebrow text-ink-mute">{copy.elsewhereLabel}</p>
+                <SocialLinks className="mt-3.5" />
+              </div>
+            )}
           </div>
 
           <ContactForm copy={copy} />

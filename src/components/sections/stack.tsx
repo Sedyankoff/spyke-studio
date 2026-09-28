@@ -1,10 +1,10 @@
 import {
-  ArrowUpRight,
+  ArrowLeftRight,
   GitBranch,
   KeyRound,
   Layers,
   Plug,
-  Radio,
+  UserCog,
   Waves,
   Webhook,
 } from "lucide-react";
@@ -23,8 +23,8 @@ const capabilityIcons: Record<
   React.ComponentType<{ className?: string }>
 > = {
   rest: Webhook,
-  websockets: Radio,
   auth: KeyRound,
+  rbac: UserCog,
   multitenancy: Layers,
   realtime: Waves,
   integrations: Plug,
@@ -41,28 +41,19 @@ export function Stack({ copy }: { copy: Dictionary["stack"] }) {
       <Container>
         <SectionIntro
           titleId="stack-title"
-          index="02"
           eyebrow={copy.eyebrow}
           title={copy.title}
           lead={copy.lead}
         />
 
         <div className="mt-14 space-y-12 sm:mt-16">
-          {stackGroups.map((group, groupIndex) => (
+          {stackGroups.map((group) => (
             <div
               key={group.id}
               className="grid gap-5 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-10"
             >
-              <h3
-                data-reveal="up"
-                className="flex items-center gap-3 pt-1 lg:flex-col lg:items-start lg:gap-2"
-              >
-                <span className="meta text-red-deep">
-                  {String(groupIndex + 1).padStart(2, "0")}
-                </span>
-                <span className="eyebrow text-ink-mute">
-                  {copy.groups[group.id]}
-                </span>
+              <h3 data-reveal="up" className="eyebrow pt-1 text-ink-mute lg:pt-5">
+                {copy.groups[group.id]}
               </h3>
 
               <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
@@ -73,10 +64,15 @@ export function Stack({ copy }: { copy: Dictionary["stack"] }) {
                     data-rd={String(Math.min(index + 1, 4))}
                   >
                     <div
-                      className="group relative flex h-full items-center gap-3.5 overflow-hidden rounded-tile border border-line bg-paper-raised p-4 transition-[transform,border-color,box-shadow] duration-300 ease-[var(--ease-spatial)] hover:-translate-y-1 hover:border-ink hover:shadow-[0_14px_36px_-20px_rgb(27_25_23/0.55)]"
+                      className={cn(
+                        "group relative flex h-full items-center gap-3.5 overflow-hidden rounded-tile border bg-paper-raised p-4 transition-colors duration-300 hover:border-ink/40",
+                        technology.primary ? "border-ink/25" : "border-line",
+                      )}
                       style={
                         {
-                          "--brand": brandIcons[technology.icon].hex,
+                          "--brand": technology.icon
+                            ? brandIcons[technology.icon].hex
+                            : "var(--color-ink)",
                         } as React.CSSProperties
                       }
                     >
@@ -85,33 +81,38 @@ export function Stack({ copy }: { copy: Dictionary["stack"] }) {
                         className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-red transition-transform duration-500 ease-[var(--ease-spatial)] group-hover:scale-x-100"
                       />
 
-                      <span className="text-ink-soft transition-[color,transform] duration-300 ease-[var(--ease-spatial)] group-hover:scale-110 group-hover:text-[var(--brand)]">
-                        <TechIcon
-                          id={technology.icon}
-                          className="h-7 w-7 sm:h-8 sm:w-8"
-                        />
+                      <span className="text-ink-soft transition-colors duration-300 group-hover:text-[var(--brand)]">
+                        {technology.icon ? (
+                          <TechIcon
+                            id={technology.icon}
+                            className="h-7 w-7 sm:h-8 sm:w-8"
+                          />
+                        ) : (
+                          // No brand mark exists (e.g. WebSockets, a protocol).
+                          <ArrowLeftRight
+                            aria-hidden="true"
+                            strokeWidth={1.6}
+                            className="h-7 w-7 sm:h-8 sm:w-8"
+                          />
+                        )}
                       </span>
 
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-medium text-ink">
+                        <span className="block text-sm leading-tight font-medium text-ink">
                           {technology.name}
                         </span>
-                        <span
-                          className={cn(
-                            "mt-0.5 block truncate font-mono text-[11px] transition-[color,opacity] duration-300",
-                            technology.note
-                              ? "text-ink-mute group-hover:text-red-deep"
-                              : "text-ink-mute opacity-0 group-hover:opacity-100",
-                          )}
-                        >
-                          {technology.note ?? copy.groups[group.id]}
-                        </span>
+                        {technology.primary ? (
+                          <span className="mt-0.5 block truncate font-mono text-[11px] text-red-deep">
+                            {copy.primaryLabel}
+                          </span>
+                        ) : (
+                          technology.note && (
+                            <span className="mt-0.5 block truncate font-mono text-[11px] text-ink-mute">
+                              {technology.note}
+                            </span>
+                          )
+                        )}
                       </span>
-
-                      <ArrowUpRight
-                        aria-hidden="true"
-                        className="h-3.5 w-3.5 shrink-0 -translate-x-1 text-red opacity-0 transition-all duration-300 ease-[var(--ease-spatial)] group-hover:translate-x-0 group-hover:opacity-100"
-                      />
                     </div>
                   </li>
                 ))}
@@ -134,11 +135,8 @@ export function Stack({ copy }: { copy: Dictionary["stack"] }) {
                   data-reveal="up"
                   data-rd={String(Math.min(index + 1, 6))}
                 >
-                  <span className="group inline-flex items-center gap-2 rounded-full border border-line bg-paper-raised px-3.5 py-2 text-[13px] text-ink-soft transition-colors duration-200 hover:border-ink hover:text-ink">
-                    <Icon
-                      aria-hidden="true"
-                      className="h-4 w-4 text-red transition-transform duration-300 ease-[var(--ease-spatial)] group-hover:-rotate-12"
-                    />
+                  <span className="inline-flex items-center gap-2 rounded-full border border-line bg-paper-raised px-3.5 py-2 text-[13px] text-ink-soft">
+                    <Icon aria-hidden="true" className="h-4 w-4 text-red" />
                     {copy.capabilities[id]}
                   </span>
                 </li>
