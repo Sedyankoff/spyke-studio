@@ -15,12 +15,20 @@ export interface SocialLink {
 
 export type ProjectId = "spyke-commerce" | "gnc-bulgaria" | "bookapart";
 
-export interface ProjectImage {
-  id: string;
+export interface ImageAsset {
   src: string;
   width: number;
   height: number;
-  kind: "desktop" | "mobile";
+}
+
+/**
+ * One page of a project, captured at desktop and at mobile width. The two
+ * always travel together: the monitor shows `desktop`, the phone `mobile`.
+ */
+export interface ProjectScreen {
+  id: string;
+  desktop: ImageAsset;
+  mobile: ImageAsset;
 }
 
 /** `from` / `to` are `YYYY` or `YYYY-MM`. */
@@ -34,7 +42,6 @@ export interface Project {
   id: ProjectId;
   /** Monogram drawn on the project's desktop icon. */
   glyph: string;
-  period?: Period;
   /** The running product, opened in a new tab. */
   url?: string;
   urlLabel?: string;
@@ -46,17 +53,14 @@ export interface Project {
    */
   embedUrl?: string;
   tech: string[];
-  images: ProjectImage[];
+  screens: ProjectScreen[];
 }
 
 export interface ProjectCopy {
   name: string;
-  category: string;
-  status: string;
-  summary: string;
+  /** One or two plain sentences: what the product is and who it is for. */
   description: string;
-  roles: string[];
-  images: Record<string, { label: string; alt: string }>;
+  screens: Record<string, { label: string; alt: string }>;
 }
 
 export type StackGroupId =

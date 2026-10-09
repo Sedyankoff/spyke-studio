@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
-import { Inter, JetBrains_Mono, Oswald } from "next/font/google";
 import { CommandPanel } from "@/components/command/command-panel";
 import { CommandProvider } from "@/components/command/command-context";
 import { PageShell } from "@/components/command/page-shell";
@@ -17,25 +16,8 @@ import {
   type Locale,
 } from "@/i18n/config";
 import { buildStructuredData } from "@/lib/structured-data";
+import { fontVariables } from "../fonts";
 import "../globals.css";
-
-const oswald = Oswald({
-  variable: "--font-oswald",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  display: "swap",
-});
 
 export const dynamicParams = false;
 
@@ -100,8 +82,9 @@ export async function generateMetadata(
   };
 }
 
+// The page opens on the hero's black; the browser chrome matches it.
 export const viewport: Viewport = {
-  themeColor: "#f5f2ec",
+  themeColor: "#0b0a09",
   colorScheme: "light",
 };
 
@@ -114,7 +97,7 @@ export default async function LocaleLayout(props: LayoutProps<"/[locale]">) {
   return (
     <html
       lang={htmlLang[locale as Locale]}
-      className={`${oswald.variable} ${inter.variable} ${jetbrains.variable}`}
+      className={fontVariables}
     >
       <body className="min-h-svh bg-paper">
         <a href="#content" className="skip-link">

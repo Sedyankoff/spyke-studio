@@ -3,12 +3,12 @@
 import Image from "next/image";
 import { AnimatePresence, m } from "framer-motion";
 import { SpykeMark } from "@/components/brand/spyke-logo";
-import type { ProjectImage } from "@/content/schema";
+import type { ImageAsset } from "@/content/schema";
 import { cn } from "@/lib/utils";
 
 interface PhoneProps {
   /** The mobile view to show; nothing selected leaves the phone on standby. */
-  image: ProjectImage | null;
+  image: ImageAsset | null;
   alt: string;
   className?: string;
 }

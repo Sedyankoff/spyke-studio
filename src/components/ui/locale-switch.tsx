@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { localeNames, otherLocale, type Locale } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 
@@ -17,20 +16,20 @@ export function LocaleSwitch({
   className,
   tone = "ink",
 }: LocaleSwitchProps) {
-  const router = useRouter();
   const target = otherLocale(locale);
 
-  const navigate = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    const hash = window.location.hash;
-    router.push(`/${target}${hash}`);
+  // A plain link: each locale has its own root layout, so switching is a
+  // full document load either way. On the way out it picks up the current
+  // #section, so the reader lands where they were.
+  const keepSection = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.currentTarget.href = `/${target}${window.location.hash}`;
   };
 
   return (
     <a
       href={`/${target}`}
       hrefLang={target}
-      onClick={navigate}
+      onClick={keepSection}
       aria-label={label}
       className={cn(
         "inline-flex h-9 items-center rounded-full border px-3 font-mono text-[11px] font-medium tracking-[0.14em] uppercase transition-colors duration-200",

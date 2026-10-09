@@ -2,19 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import type { ProjectImage } from "@/content/schema";
-import { cn } from "@/lib/utils";
+import type { ImageAsset } from "@/content/schema";
 
 /** The site is laid out at this width, then scaled to fit the window. */
 const VIRTUAL_WIDTH = 1280;
 /** A frame that has not loaded by now is treated as unavailable. */
-const LOAD_TIMEOUT = 15_000;
+const LOAD_TIMEOUT = 20_000;
 
 interface LivePreviewProps {
   url: string;
   title: string;
-  /** Shown underneath until the live site has painted. */
-  poster?: ProjectImage;
+  /** Shown beneath the frame, so it fills the window until the site paints. */
+  poster?: ImageAsset;
   onFail: () => void;
 }
 
@@ -23,8 +22,11 @@ interface LivePreviewProps {
  * a desktop width and scales it to the window, so the visitor sees — and can
  * scroll, click and navigate — the real layout rather than a squeezed one.
  *
- * The screenshot stays in place until the frame reports it has loaded, so
- * there is never a blank box; if it never does, the window falls back.
+ * The frame has no background of its own and sits over the screenshot: until
+ * the site paints its page (which can be well after `load` for a
+ * client-rendered site), the screenshot shows through, so there is never a
+ * blank box. If the frame never loads, the window falls back to the
+ * screenshots altogether.
  */
 export function LivePreview({ url, title, poster, onFail }: LivePreviewProps) {
   const boxRef = useRef<HTMLDivElement>(null);
@@ -65,10 +67,7 @@ export function LivePreview({ url, title, poster, onFail }: LivePreviewProps) {
           alt=""
           fill
           sizes="(min-width: 1280px) 1040px, 84vw"
-          className={cn(
-            "object-cover object-top transition-opacity duration-500",
-            loaded && "opacity-0",
-          )}
+          className="object-cover object-top"
         />
       )}
 
@@ -80,10 +79,7 @@ export function LivePreview({ url, title, poster, onFail }: LivePreviewProps) {
           referrerPolicy="strict-origin-when-cross-origin"
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
           onLoad={() => setLoaded(true)}
-          className={cn(
-            "absolute top-0 left-0 origin-top-left border-0 bg-white transition-opacity duration-500",
-            loaded ? "opacity-100" : "opacity-0",
-          )}
+          className="absolute top-0 left-0 origin-top-left border-0"
           style={{
             width: size.width / scale,
             height: size.height / scale,

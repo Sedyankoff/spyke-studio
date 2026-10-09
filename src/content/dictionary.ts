@@ -20,6 +20,9 @@ export interface Dictionary {
     close: string;
     languageLabel: string;
     switchLanguage: string;
+    /** The 404 page. */
+    notFound: string;
+    home: string;
     /** Short month names, January first. */
     months: string[];
   };
@@ -68,15 +71,15 @@ export interface Dictionary {
     open: string;
     workstationLabel: string;
     liveView: string;
-    openLive: string;
+    /** Link that opens the running site in a new tab. */
+    visitSite: string;
+    /** Appended to the link's accessible name. */
+    newTab: string;
+    /** Appended to a screen's alt text for its phone capture. */
+    mobileView: string;
     previousImage: string;
     nextImage: string;
-    categoryLabel: string;
-    roleLabel: string;
-    statusLabel: string;
     techLabel: string;
-    overviewLabel: string;
-    liveLabel: string;
     projects: Record<ProjectId, ProjectCopy>;
   };
   experience: {
@@ -92,7 +95,7 @@ export interface Dictionary {
         summary: string;
         /** The primary technologies of the role. */
         tags: string[];
-        /** Further areas of experience, listed quietly after the tags. */
+        /** Areas of work, listed quietly after the tags. */
         areas?: string[];
       }
     >;

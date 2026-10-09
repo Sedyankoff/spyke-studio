@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 
 interface WorkProps {
   copy: Dictionary["work"];
-  present: string;
   /** Projects whose live site passed the framing check at build time. */
   embeddable: ProjectId[];
 }
@@ -33,15 +32,15 @@ function subscribeLive(onChange: () => void) {
   return () => query.removeEventListener("change", onChange);
 }
 
-/**
- * Visual first: the workstation takes the width of the section, the phone
- * stands beside it showing the same project's mobile view, and everything
- * to read sits underneath. On phones: monitor, phone, then information.
- */
 /** The monitor never starts empty: the first project is open on arrival. */
 const initialOpen: OpenState = { id: projects[0].id, origin: "50% 50%" };
 
-export function Work({ copy, present, embeddable }: WorkProps) {
+/**
+ * Visual first: the workstation takes the width of the section, the phone
+ * stands beside it showing the same screen at mobile width, and everything
+ * to read sits underneath. On phones: monitor, phone, then information.
+ */
+export function Work({ copy, embeddable }: WorkProps) {
   const [open, setOpen] = useState<OpenState | null>(initialOpen);
   const [view, setView] = useState(0);
   const [hoverId, setHoverId] = useState<ProjectId | null>(null);
@@ -67,10 +66,9 @@ export function Work({ copy, present, embeddable }: WorkProps) {
   }
   const live = active ? liveOf(active) : null;
 
-  /** The live site, when there is one, then the desktop screenshots. */
+  /** The live site, when there is one, then the screens. */
   function viewCount(project: Project) {
-    const shots = project.images.filter((image) => image.kind === "desktop");
-    return shots.length + (liveOf(project) ? 1 : 0);
+    return project.screens.length + (liveOf(project) ? 1 : 0);
   }
 
   /** The frame never loaded: drop the live view for this project, quietly. */
@@ -80,7 +78,12 @@ export function Work({ copy, present, embeddable }: WorkProps) {
     setFailed((list) => (list.includes(id) ? list : [...list, id]));
     setView(0);
   }
-  const mobileView = active?.images.find((image) => image.kind === "mobile") ?? null;
+
+  // The phone shows the mobile capture of the screen on the monitor; while
+  // the live site is up, that of the first screen.
+  const screen = active
+    ? active.screens[Math.max(view - (live ? 1 : 0), 0)] ?? active.screens[0]
+    : null;
 
   /** Where a project's icon sits on the desktop — its window grows from there. */
   function originOf(id: ProjectId) {
@@ -219,7 +222,8 @@ export function Work({ copy, present, embeddable }: WorkProps) {
             side of the monitor and phone; below that there is no gutter to
             spare, so they sit just inside the screen's edges. Either way they
             are centred on the screen: its centre is derived from the width of
-            this layer (the monitor takes 86% of it, then its bezel and 16:9).
+            this layer (the monitor takes 86% of it from sm up, then its bezel
+            and 16:9).
           */}
           <div
             data-reveal="fade"
@@ -258,14 +262,14 @@ export function Work({ copy, present, embeddable }: WorkProps) {
             data-rd="2"
             className={cn(
               "mx-auto w-[46%] max-w-[13rem] sm:relative sm:z-10 sm:order-none sm:col-start-2 sm:row-start-1 sm:mx-0 sm:-ml-[21%] sm:w-[111%] sm:max-w-none sm:self-end",
-              !mobileView && "max-sm:hidden",
+              !screen && "max-sm:hidden",
             )}
           >
             <Phone
-              image={mobileView}
+              image={screen?.mobile ?? null}
               alt={
-                mobileView && active
-                  ? (copy.projects[active.id].images[mobileView.id]?.alt ?? "")
+                screen && active
+                  ? `${copy.projects[active.id].screens[screen.id]?.alt ?? copy.projects[active.id].name} — ${copy.mobileView}`
                   : ""
               }
             />
@@ -274,7 +278,6 @@ export function Work({ copy, present, embeddable }: WorkProps) {
           <ProjectInfo
             projects={projects}
             work={copy}
-            present={present}
             activeId={open?.id ?? null}
             hoverId={hoverId}
             onOpen={openProject}
@@ -304,7 +307,7 @@ function StepButton({
       onClick={onClick}
       aria-label={label}
       className={cn(
-        "group pointer-events-auto absolute top-[calc(31.25cqw+2px)] flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-line-invert bg-void/55 text-paper/80 transition-colors duration-200 hover:border-paper hover:bg-paper hover:text-ink sm:top-[calc(24.19cqw+5px)] sm:h-9 sm:w-9 lg:bg-transparent lg:text-paper/70 min-[87.5rem]:h-11 min-[87.5rem]:w-11",
+        "group pointer-events-auto absolute top-[calc(28.125cqw+3px)] flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-line-invert bg-void/55 text-paper/80 transition-colors duration-200 hover:border-paper hover:bg-paper hover:text-ink sm:top-[calc(24.19cqw+5px)] sm:h-9 sm:w-9 lg:bg-transparent lg:text-paper/70 min-[87.5rem]:h-11 min-[87.5rem]:w-11",
         className,
       )}
     >

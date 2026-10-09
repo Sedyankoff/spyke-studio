@@ -15,7 +15,6 @@ export default async function HomePage(props: PageProps<"/[locale]">) {
   if (!isLocale(locale)) notFound();
 
   const dictionary = getDictionary(locale);
-  const present = dictionary.common.present;
   const embeddable = await embeddableProjects(projects);
 
   return (
@@ -24,11 +23,7 @@ export default async function HomePage(props: PageProps<"/[locale]">) {
         <Hero copy={dictionary.hero} />
         <About copy={dictionary.about} />
         <Stack copy={dictionary.stack} />
-        <Work
-          copy={dictionary.work}
-          present={present}
-          embeddable={embeddable}
-        />
+        <Work copy={dictionary.work} embeddable={embeddable} />
         <Experience copy={dictionary.experience} common={dictionary.common} />
       </main>
       <Footer

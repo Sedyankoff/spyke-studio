@@ -1,18 +1,12 @@
-import type { SocialLink } from "@/content/schema";
-
-export interface ImageAsset {
-  src: string;
-  width: number;
-  height: number;
-}
+import type { ImageAsset, SocialLink } from "@/content/schema";
 
 export const siteConfig = {
   name: "Spyke Studio",
-  url: "https://spyke.studio",
+  /** Production origin. Canonical URLs, the sitemap and social cards derive from it. */
+  url: "https://spykedev.com",
   email: "stoil0878@gmail.com",
   /** Display form and dialable form of the same number. */
   phone: { display: "+359 878 245 747", href: "tel:+359878245747" },
-  timeZone: "Europe/Sofia",
   person: {
     givenName: "Stoil",
     familyName: "Sedyankov",
@@ -24,27 +18,32 @@ export const siteConfig = {
     /**
      * `object-position` for the full-bleed crop: which part of the photograph
      * stays in frame. Tuned for this image (horizon, landscape and figure in
-     * the lower half); adjust it when the production photograph lands.
+     * the lower half).
      */
     focus: "48% 76%",
   },
 } as const;
 
 /**
- * Brand artwork. `logo.png` is the original supplied file (white lockup on a
- * solid black plate); the three files below are that same artwork with the
- * plate removed so the mark can sit on either surface.
+ * Brand artwork. `logo.png` is the original supplied lockup (white on a solid
+ * black plate); `logo-ink` / `logo-paper` are that artwork with the plate
+ * removed, for paper and ink surfaces. `icon` is the Spyke Studio app icon —
+ * the S and arrow on a black disc — used as the compact mark and, resized, for
+ * the favicon, Apple touch icon and manifest icons.
  */
 export const brandAssets = {
   logoInk: { src: "/images/logo-ink.png", width: 1485, height: 509 },
   logoPaper: { src: "/images/logo-paper.png", width: 1485, height: 509 },
-  mark: { src: "/images/logo-mark.png", width: 200, height: 278 },
+  icon: {
+    src: "/images/icons/spyke-studio-icon.png",
+    width: 1254,
+    height: 1254,
+  },
 } satisfies Record<string, ImageAsset>;
 
 /**
- * Background of the About section: a cut-out portrait on a transparent
- * ground, so the section's own black shows through as the studio around it.
- * To change it, drop the new file into `public/images` and update these.
+ * The About portrait: a cut-out on a transparent ground, so the section's own
+ * black shows through around it.
  */
 export const portrait = {
   src: "/images/StoilSedyankov.png",

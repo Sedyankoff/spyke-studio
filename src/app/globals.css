@@ -89,8 +89,7 @@
 
 @layer components {
   .display-hero,
-  .display-section,
-  .display-card {
+  .display-section {
     font-family: var(--font-display);
     font-weight: 600;
     text-transform: uppercase;
@@ -110,11 +109,6 @@
   .display-section {
     font-size: clamp(2.125rem, 4.4vw, 3.75rem);
     line-height: 0.98;
-  }
-
-  .display-card {
-    font-size: clamp(1.375rem, 2.3vw, 2rem);
-    line-height: 1.02;
   }
 
   .eyebrow {
@@ -310,80 +304,18 @@
 
 /* ---------------------------------------------------------------------------
    About
-   The portrait is a cut-out on a transparent ground: the section's black is
-   the studio around it. The figure is graded like the hero photograph and
-   placed clear of the copy. Black only — nothing glows or blurs.
+   The portrait is a cut-out on a transparent ground, graded like the hero
+   photograph. It falls away into the section's black towards its foot, so
+   the crop at the bottom of the image never reads as an edge.
 --------------------------------------------------------------------------- */
 
-/* Phones and tablets: one column, so the portrait leads the section and the
-   copy begins where the figure has fallen away into black. */
-.about-section {
-  --about-plate: min(100%, 36rem);
-  /* Clears the header, then the figure down to where it has faded out. */
-  padding-top: calc(4rem + min(71vw, 25.5rem));
-}
-
-.about-plate {
-  top: 4rem;
-  left: 50%;
-  width: var(--about-plate);
-  translate: -50% 0;
-  -webkit-mask-image: linear-gradient(to bottom, #000 44%, transparent 68%);
-  mask-image: linear-gradient(to bottom, #000 44%, transparent 68%);
+.about-portrait {
+  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 98%);
+  mask-image: linear-gradient(to bottom, #000 58%, transparent 98%);
 }
 
 .about-photo {
-  filter: brightness(0.74) contrast(1.06) saturate(0.7);
-}
-
-/* Desktop: the figure stands in the identity column, beneath the name, and
-   falls off into black at the shoulders and towards the foot. Measured from
-   the container (82rem, 3rem gutters) so it stays under the same column. */
-@media (min-width: 1024px) {
-  .about-section {
-    padding-top: 8rem;
-  }
-
-  .about-plate {
-    --about-content: calc(min(100%, 82rem) - 6rem);
-    /* Just beneath the name block: padding, rule and eyebrow come to 20rem,
-       then the name (the .display-section size) — two lines until 75rem,
-       where it may still wrap, one line beyond. */
-    top: calc(20rem + 1.96 * clamp(2.125rem, 4.4vw, 3.75rem));
-    translate: none;
-    left: calc(max(0px, (100% - 82rem) / 2) + 3rem);
-    width: calc(var(--about-content) * 0.6);
-    -webkit-mask-image:
-      linear-gradient(to bottom, #000 52%, transparent 92%),
-      linear-gradient(to right, transparent 0%, #000 14%);
-    -webkit-mask-composite: source-in;
-    mask-image:
-      linear-gradient(to bottom, #000 52%, transparent 92%),
-      linear-gradient(to right, transparent 0%, #000 14%);
-    mask-composite: intersect;
-  }
-}
-
-@media (min-width: 75rem) {
-  .about-plate {
-    top: calc(20rem + 0.98 * clamp(2.125rem, 4.4vw, 3.75rem));
-  }
-}
-
-/* The foot of the section settles into black, so the figure never meets the
-   next section as a hard edge. */
-.about-grade {
-  background: linear-gradient(
-    to top,
-    rgb(11 10 9) 0%,
-    rgb(11 10 9 / 0.85) 8%,
-    rgb(11 10 9 / 0.4) 18%,
-    rgb(11 10 9 / 0) 30%
-  );
-}
-
-.about-copy {
-  text-shadow: 0 2px 24px rgb(11 10 9 / 0.6);
+  filter: brightness(0.8) contrast(1.05) saturate(0.75);
 }
 
 /* ---------------------------------------------------------------------------

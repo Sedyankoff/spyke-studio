@@ -88,9 +88,9 @@ export function Experience({ copy, common }: ExperienceProps) {
                     </div>
 
                     <div>
-                      <h4 className="text-lg font-semibold text-ink sm:text-xl">
+                      <h3 className="text-lg font-semibold text-ink sm:text-xl">
                         {item.role}
-                      </h4>
+                      </h3>
                       <p className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-ink-mute">
                         <span className="font-medium text-ink-soft">
                           {item.company}

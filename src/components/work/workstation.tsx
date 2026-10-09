@@ -87,14 +87,15 @@ export function Workstation({
       <div className="rounded-[1rem] border border-line-invert bg-[#12110f] p-1.5 shadow-[0_80px_140px_-70px_rgb(0_0_0/0.95)] sm:rounded-[1.25rem] sm:p-2.5 lg:rounded-[1.5rem] lg:p-3">
         <div
           ref={screenRef}
-          className="relative aspect-[16/10] overflow-hidden rounded-[0.625rem] bg-void ring-1 ring-black/60 sm:aspect-video sm:rounded-[0.75rem]">
+          className="relative aspect-video overflow-hidden rounded-[0.625rem] bg-void ring-1 ring-black/60 sm:rounded-[0.75rem]"
+        >
           <div ref={desktopRef} className="absolute inset-0 overflow-hidden">
             {/* Wallpaper: the site's engineering grid and the mark. */}
             <div aria-hidden="true" className="absolute inset-0">
               <div className="blueprint absolute inset-0 opacity-60" />
               <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_45%,rgb(245_242_236/0.05),transparent_75%)]" />
               <div className="absolute right-[4%] bottom-[7%] h-[26%] opacity-[0.05]">
-                <SpykeMark sizes="200px" />
+                <SpykeMark sizes="256px" />
               </div>
             </div>
 
@@ -127,7 +128,7 @@ export function Workstation({
                   project={active}
                   copy={work.projects[active.id]}
                   work={work}
-                  views={active.images.filter((image) => image.kind === "desktop")}
+                  screens={active.screens}
                   origin={open.origin}
                   live={nearView ? live : null}
                   onLiveFail={onLiveFail}

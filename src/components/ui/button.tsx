@@ -6,12 +6,6 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        solid: "bg-ink text-paper hover:bg-red",
-        outline:
-          "border border-line bg-transparent text-ink hover:border-ink hover:bg-ink hover:text-paper",
-        invert: "bg-paper text-ink hover:bg-red hover:text-paper",
-        invertOutline:
-          "border border-line-invert text-paper hover:border-paper hover:bg-paper hover:text-ink",
         /** The one red action on a surface. */
         primary:
           "bg-red-action text-white shadow-[0_14px_30px_-16px_rgb(217_6_22/0.85)] duration-300 hover:-translate-y-px hover:bg-red-deep hover:shadow-[0_20px_36px_-16px_rgb(179_15_24/0.9)]",
@@ -25,21 +19,9 @@ const buttonVariants = cva(
         lg: "h-13 px-7 text-[15px]",
       },
     },
-    defaultVariants: { variant: "solid", size: "md" },
+    defaultVariants: { variant: "primary", size: "md" },
   },
 );
-
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
-  VariantProps<typeof buttonVariants>;
-
-export function Button({ className, variant, size, ...props }: ButtonProps) {
-  return (
-    <button
-      className={cn(buttonVariants({ variant, size }), className)}
-      {...props}
-    />
-  );
-}
 
 type ButtonLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> &
   VariantProps<typeof buttonVariants>;
