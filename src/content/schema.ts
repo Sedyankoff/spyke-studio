@@ -1,13 +1,6 @@
 import type { BrandIconId } from "@/components/ui/brand-icons";
 
-export type SectionId =
-  | "hero"
-  | "about"
-  | "stack"
-  | "work"
-  | "experience"
-  | "education"
-  | "contact";
+export type SectionId = "hero" | "about" | "stack" | "work" | "experience";
 
 export type NavSectionId = Exclude<SectionId, "hero">;
 
@@ -20,11 +13,7 @@ export interface SocialLink {
   href: string | null;
 }
 
-export type ProjectId =
-  | "spyke-commerce"
-  | "gnc-bulgaria"
-  | "bookapart"
-  | "spyke-arbix";
+export type ProjectId = "spyke-commerce" | "gnc-bulgaria" | "bookapart";
 
 export interface ProjectImage {
   id: string;
@@ -77,8 +66,7 @@ export type StackGroupId =
   | "data"
   | "cloud"
   | "delivery"
-  | "realtime"
-  | "observability";
+  | "realtime";
 
 export interface StackTechnology {
   id: string;
@@ -96,21 +84,9 @@ export interface StackGroup {
 }
 
 export type CapabilityId =
-  | "rest"
-  | "auth"
-  | "rbac"
-  | "multitenancy"
-  | "integrations"
-  | "realtime"
-  | "cicd";
+  "rest" | "multitenancy" | "integrations" | "realtime" | "cicd";
 
 export interface ExperienceEntry {
   id: string;
   period: Period;
-}
-
-export interface EducationEntry {
-  id: string;
-  period: Period;
-  expectedGraduation?: string;
 }

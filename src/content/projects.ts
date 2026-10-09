@@ -124,19 +124,4 @@ export const projects: Project[] = [
       },
     ],
   },
-  {
-    id: "spyke-arbix",
-    glyph: "SA",
-    tech: [
-      "Go",
-      "React",
-      "TypeScript",
-      "PostgreSQL",
-      "Redis",
-      "NATS / JetStream",
-      "WebSockets",
-      "Docker",
-    ],
-    images: [],
-  },
 ];

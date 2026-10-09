@@ -66,7 +66,6 @@ export interface Dictionary {
     title: string;
     lead: string;
     open: string;
-    closeProject: string;
     workstationLabel: string;
     liveView: string;
     openLive: string;
@@ -78,8 +77,6 @@ export interface Dictionary {
     techLabel: string;
     overviewLabel: string;
     liveLabel: string;
-    dataPathLabel: string;
-    dataPath: string[];
     projects: Record<ProjectId, ProjectCopy>;
   };
   experience: {
@@ -99,47 +96,6 @@ export interface Dictionary {
         areas?: string[];
       }
     >;
-  };
-  education: {
-    eyebrow: string;
-    title: string;
-    academic: string;
-    statusTitle: string;
-    standingLabel: string;
-    periodLabel: string;
-    expectedLabel: string;
-    entries: Record<
-      string,
-      {
-        degree: string;
-        institution: string;
-        summary: string;
-        /** Year of study, e.g. "Final year". */
-        standing: string;
-      }
-    >;
-  };
-  contact: {
-    eyebrow: string;
-    title: string;
-    lead: string;
-    emailLabel: string;
-    phoneLabel: string;
-    copyEmail: string;
-    emailCopied: string;
-    elsewhereLabel: string;
-    form: {
-      name: string;
-      namePlaceholder: string;
-      email: string;
-      emailPlaceholder: string;
-      message: string;
-      messagePlaceholder: string;
-      submit: string;
-      note: string;
-      subject: string;
-      opening: string;
-    };
   };
   footer: {
     /** Copyright holder. */

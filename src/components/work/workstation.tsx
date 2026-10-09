@@ -19,8 +19,8 @@ interface WorkstationProps {
   work: Dictionary["work"];
   open: OpenState | null;
   view: number;
-  /** False until the reader opens something themselves. */
-  interacted: boolean;
+  /** Whether the next window to open takes focus — never on page load. */
+  focusOnOpen: boolean;
   /** Live site for the open project, if it may be shown on this device. */
   live: string | null;
   onLiveFail: () => void;
@@ -29,7 +29,7 @@ interface WorkstationProps {
   onOpen: (id: ProjectId) => void;
   onClose: () => void;
   onHover: (id: ProjectId | null) => void;
-  onView: (view: number) => void;
+  onStep: (delta: 1 | -1) => void;
   className?: string;
 }
 
@@ -43,7 +43,7 @@ export function Workstation({
   work,
   open,
   view,
-  interacted,
+  focusOnOpen,
   live,
   onLiveFail,
   hoverId,
@@ -51,7 +51,7 @@ export function Workstation({
   onOpen,
   onClose,
   onHover,
-  onView,
+  onStep,
   className,
 }: WorkstationProps) {
   const active = open
@@ -132,9 +132,8 @@ export function Workstation({
                   live={nearView ? live : null}
                   onLiveFail={onLiveFail}
                   view={view}
-                  focusOnOpen={interacted}
-                  onView={onView}
-                  onClose={onClose}
+                  focusOnOpen={focusOnOpen}
+                  onStep={onStep}
                 />
               )}
             </AnimatePresence>

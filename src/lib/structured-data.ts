@@ -1,5 +1,4 @@
 import type { Dictionary } from "@/content/dictionary";
-import { educationEntries } from "@/content/cv";
 import { siteConfig, socialLinks } from "@/content/site";
 import { stackGroups } from "@/content/stack";
 import { htmlLang, type Locale } from "@/i18n/config";
@@ -30,10 +29,13 @@ export function buildStructuredData(locale: Locale, dictionary: Dictionary) {
           name: dictionary.experience.entries.orak.company,
         },
         // Currently enrolled — an affiliation, not (yet) an alumnus.
-        affiliation: educationEntries.map((entry) => ({
+        affiliation: {
           "@type": "CollegeOrUniversity",
-          name: dictionary.education.entries[entry.id].institution,
-        })),
+          name:
+            locale === "bg"
+              ? "Пловдивски университет „Паисий Хилендарски“"
+              : "Plovdiv University “Paisii Hilendarski”",
+        },
         address: {
           "@type": "PostalAddress",
           addressLocality: locale === "bg" ? "Пловдив" : "Plovdiv",

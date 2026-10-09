@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useSyncExternalStore } from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Section } from "@/components/layout/section";
 import { Container } from "@/components/ui/container";
 import { SectionIntro } from "@/components/ui/section-intro";
@@ -9,7 +10,7 @@ import { ProjectInfo } from "@/components/work/project-info";
 import { Workstation, type OpenState } from "@/components/work/workstation";
 import { projects } from "@/content/projects";
 import type { Dictionary } from "@/content/dictionary";
-import type { ProjectId } from "@/content/schema";
+import type { Project, ProjectId } from "@/content/schema";
 import { cn } from "@/lib/utils";
 
 interface WorkProps {
@@ -44,7 +45,7 @@ export function Work({ copy, present, embeddable }: WorkProps) {
   const [open, setOpen] = useState<OpenState | null>(initialOpen);
   const [view, setView] = useState(0);
   const [hoverId, setHoverId] = useState<ProjectId | null>(null);
-  const [interacted, setInteracted] = useState(false);
+  const [focusWindow, setFocusWindow] = useState(false);
   const [failed, setFailed] = useState<ProjectId[]>([]);
   const liveCapable = useSyncExternalStore(
     subscribeLive,
@@ -55,13 +56,22 @@ export function Work({ copy, present, embeddable }: WorkProps) {
   const stationRef = useRef<HTMLDivElement>(null);
 
   const active = open ? projects.find((project) => project.id === open.id) : null;
-  const live =
-    active?.embedUrl &&
-    liveCapable &&
-    embeddable.includes(active.id) &&
-    !failed.includes(active.id)
-      ? active.embedUrl
+
+  function liveOf(project: Project) {
+    return project.embedUrl &&
+      liveCapable &&
+      embeddable.includes(project.id) &&
+      !failed.includes(project.id)
+      ? project.embedUrl
       : null;
+  }
+  const live = active ? liveOf(active) : null;
+
+  /** The live site, when there is one, then the desktop screenshots. */
+  function viewCount(project: Project) {
+    const shots = project.images.filter((image) => image.kind === "desktop");
+    return shots.length + (liveOf(project) ? 1 : 0);
+  }
 
   /** The frame never loaded: drop the live view for this project, quietly. */
   function liveFailed() {
@@ -96,13 +106,13 @@ export function Work({ copy, present, embeddable }: WorkProps) {
     requestAnimationFrame(next);
   }
 
-  function openProject(id: ProjectId) {
+  function openProject(id: ProjectId, startView = 0, focus = true) {
     if (open?.id === id) return;
 
     retire(() => {
-      setInteracted(true);
+      setFocusWindow(focus);
       setOpen({ id, origin: originOf(id) });
-      setView(0);
+      setView(startView);
     });
 
     // Opened from the index below: make sure the screen is there to watch.
@@ -119,6 +129,31 @@ export function Work({ copy, present, embeddable }: WorkProps) {
         });
       }
     }
+  }
+
+  /**
+   * Previous / next: through the open project's screens first, then on to the
+   * neighbouring project — entered from its last screen when going back.
+   */
+  function step(delta: 1 | -1) {
+    if (active) {
+      const next = view + delta;
+      if (next >= 0 && next < viewCount(active)) {
+        setView(next);
+        return;
+      }
+    }
+
+    const index = active ? projects.indexOf(active) : delta > 0 ? -1 : 0;
+    const target =
+      projects[(index + delta + projects.length) % projects.length];
+    // Keep focus in the screen when stepping from the keyboard inside it.
+    const focus = !!desktopRef.current?.contains(document.activeElement);
+    openProject(
+      target.id,
+      delta > 0 ? 0 : Math.max(viewCount(target) - 1, 0),
+      focus,
+    );
   }
 
   function closeProject() {
@@ -160,14 +195,14 @@ export function Work({ copy, present, embeddable }: WorkProps) {
           <div
             ref={stationRef}
             data-reveal="scale"
-            className="isolate scroll-mt-24 sm:col-start-1 sm:row-start-1"
+            className="isolate col-start-1 row-start-1 scroll-mt-24"
           >
             <Workstation
               projects={projects}
               work={copy}
               open={open}
               view={view}
-              interacted={interacted}
+              focusOnOpen={focusWindow}
               live={live}
               onLiveFail={liveFailed}
               hoverId={hoverId}
@@ -175,8 +210,42 @@ export function Work({ copy, present, embeddable }: WorkProps) {
               onOpen={openProject}
               onClose={closeProject}
               onHover={setHoverId}
-              onView={setView}
+              onStep={step}
             />
+          </div>
+
+          {/*
+            Previous / next. On wide screens they stand in the gutters, either
+            side of the monitor and phone; below that there is no gutter to
+            spare, so they sit just inside the screen's edges. Either way they
+            are centred on the screen: its centre is derived from the width of
+            this layer (the monitor takes 86% of it, then its bezel and 16:9).
+          */}
+          <div
+            data-reveal="fade"
+            data-rd="2"
+            className="@container pointer-events-none relative z-20 col-start-1 row-start-1 sm:col-end-3"
+          >
+            <StepButton
+              label={copy.previousImage}
+              onClick={() => step(-1)}
+              className="left-3.5 sm:left-[calc(3cqw+0.75rem)] lg:right-[calc(100%+0.375rem)] lg:left-auto min-[87.5rem]:right-[calc(100%+1.25rem)]"
+            >
+              <ArrowLeft
+                strokeWidth={1.5}
+                className="h-4 w-4 transition-transform duration-300 ease-[var(--ease-spatial)] group-hover:-translate-x-0.5"
+              />
+            </StepButton>
+            <StepButton
+              label={copy.nextImage}
+              onClick={() => step(1)}
+              className="right-3.5 sm:right-[calc(17cqw+0.75rem)] lg:right-auto lg:left-[calc(100%+0.375rem)] min-[87.5rem]:left-[calc(100%+1.25rem)]"
+            >
+              <ArrowRight
+                strokeWidth={1.5}
+                className="h-4 w-4 transition-transform duration-300 ease-[var(--ease-spatial)] group-hover:translate-x-0.5"
+              />
+            </StepButton>
           </div>
 
           {/*
@@ -215,5 +284,31 @@ export function Work({ copy, present, embeddable }: WorkProps) {
         </div>
       </Container>
     </Section>
+  );
+}
+
+function StepButton({
+  label,
+  onClick,
+  className,
+  children,
+}: {
+  label: string;
+  onClick: () => void;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className={cn(
+        "group pointer-events-auto absolute top-[calc(31.25cqw+2px)] flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-line-invert bg-void/55 text-paper/80 transition-colors duration-200 hover:border-paper hover:bg-paper hover:text-ink sm:top-[calc(24.19cqw+5px)] sm:h-9 sm:w-9 lg:bg-transparent lg:text-paper/70 min-[87.5rem]:h-11 min-[87.5rem]:w-11",
+        className,
+      )}
+    >
+      {children}
+    </button>
   );
 }

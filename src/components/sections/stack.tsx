@@ -1,10 +1,8 @@
 import {
   ArrowLeftRight,
   GitBranch,
-  KeyRound,
   Layers,
   Plug,
-  UserCog,
   Waves,
   Webhook,
 } from "lucide-react";
@@ -23,8 +21,6 @@ const capabilityIcons: Record<
   React.ComponentType<{ className?: string }>
 > = {
   rest: Webhook,
-  auth: KeyRound,
-  rbac: UserCog,
   multitenancy: Layers,
   realtime: Waves,
   integrations: Plug,

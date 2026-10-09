@@ -41,7 +41,16 @@ export const brandAssets = {
   mark: { src: "/images/logo-mark.png", width: 200, height: 278 },
 } satisfies Record<string, ImageAsset>;
 
-export const portrait: ImageAsset | null = null;
+/**
+ * Background of the About section: a cut-out portrait on a transparent
+ * ground, so the section's own black shows through as the studio around it.
+ * To change it, drop the new file into `public/images` and update these.
+ */
+export const portrait = {
+  src: "/images/StoilSedyankov.png",
+  width: 2028,
+  height: 2120,
+} satisfies ImageAsset;
 
 /**
  * Professional profiles. An `href` of `null` is a placeholder: the link is

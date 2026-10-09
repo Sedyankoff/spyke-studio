@@ -36,8 +36,6 @@ export const stackGroups: StackGroup[] = [
     technologies: [
       { id: "sqlserver", name: "SQL Server", icon: "sqlserver" },
       { id: "postgresql", name: "PostgreSQL", icon: "postgresql" },
-      { id: "redis", name: "Redis", icon: "redis" },
-      { id: "clickhouse", name: "ClickHouse", icon: "clickhouse" },
     ],
   },
   {
@@ -47,7 +45,6 @@ export const stackGroups: StackGroup[] = [
       { id: "docker", name: "Docker", icon: "docker" },
       { id: "cloudflare", name: "Cloudflare", icon: "cloudflare" },
       { id: "linux", name: "Linux", icon: "linux" },
-      { id: "terraform", name: "Terraform", icon: "terraform" },
     ],
   },
   {
@@ -65,19 +62,10 @@ export const stackGroups: StackGroup[] = [
       { id: "nats", name: "NATS / JetStream", icon: "nats" },
     ],
   },
-  {
-    id: "observability",
-    technologies: [
-      { id: "opentelemetry", name: "OpenTelemetry", icon: "opentelemetry" },
-      { id: "grafana", name: "Grafana", icon: "grafana" },
-    ],
-  },
 ];
 
 export const capabilityIds: CapabilityId[] = [
   "rest",
-  "auth",
-  "rbac",
   "multitenancy",
   "integrations",
   "realtime",

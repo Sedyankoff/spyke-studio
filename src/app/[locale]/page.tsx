@@ -1,7 +1,5 @@
 import { Footer } from "@/components/layout/footer";
 import { About } from "@/components/sections/about";
-import { Contact } from "@/components/sections/contact";
-import { Education } from "@/components/sections/education";
 import { Experience } from "@/components/sections/experience";
 import { Hero } from "@/components/sections/hero";
 import { Stack } from "@/components/sections/stack";
@@ -32,8 +30,6 @@ export default async function HomePage(props: PageProps<"/[locale]">) {
           embeddable={embeddable}
         />
         <Experience copy={dictionary.experience} common={dictionary.common} />
-        <Education copy={dictionary.education} common={dictionary.common} />
-        <Contact copy={dictionary.contact} identity={dictionary.about} />
       </main>
       <Footer
         copy={dictionary.footer}

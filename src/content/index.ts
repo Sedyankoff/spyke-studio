@@ -15,8 +15,6 @@ export const navSectionIds: NavSectionId[] = [
   "stack",
   "work",
   "experience",
-  "education",
-  "contact",
 ];
 
 /** `2024` stays `2024`; `2024-05` becomes e.g. `May 2024` with the given month names. */

@@ -77,7 +77,7 @@ export function Hero({ copy }: { copy: Dictionary["hero"] }) {
                 className="h-4 w-4 transition-transform duration-300 ease-[var(--ease-spatial)] group-hover:translate-y-0.5"
               />
             </ButtonLink>
-            <ButtonLink href="#contact" variant="ghost" size="lg">
+            <ButtonLink href={`mailto:${siteConfig.email}`} variant="ghost" size="lg">
               {copy.secondaryCta}
             </ButtonLink>
           </div>
