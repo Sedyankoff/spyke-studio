@@ -26,7 +26,8 @@ interface SiteHeaderProps {
 export function SiteHeader({ locale, nav, common }: SiteHeaderProps) {
   const { open, toggleCommand, activeSection } = useCommand();
   const [scrolled, setScrolled] = useState(false);
-  const [dark, setDark] = useState(true);
+  // The page opens on the paper hero.
+  const [dark, setDark] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);
   const frameRef = useRef<number | null>(null);

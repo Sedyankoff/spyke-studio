@@ -11,14 +11,12 @@ export interface Dictionary {
     title: string;
     description: string;
     keywords: string[];
-    ogAlt: string;
   };
   common: {
     present: string;
     skipToContent: string;
     backToTop: string;
     close: string;
-    languageLabel: string;
     switchLanguage: string;
     /** The 404 page. */
     notFound: string;
@@ -34,9 +32,6 @@ export interface Dictionary {
     items: Record<NavSectionId, { label: string; hint: string }>;
   };
   hero: {
-    /** Name and title, above the headline. */
-    eyebrow: string;
-    location: string;
     statement: string;
     /** `statement`, word for word, with the display line breaks chosen by hand. */
     statementLines: string[];
@@ -48,10 +43,7 @@ export interface Dictionary {
     eyebrow: string;
     name: string;
     role: string;
-    location: string;
     paragraphs: string[];
-    factsLabel: string;
-    facts: { label: string; value: string }[];
     portraitAlt: string;
   };
   stack: {
@@ -71,6 +63,7 @@ export interface Dictionary {
     open: string;
     workstationLabel: string;
     liveView: string;
+    liveLoading: string;
     /** Link that opens the running site in a new tab. */
     visitSite: string;
     /** Appended to the link's accessible name. */

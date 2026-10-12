@@ -12,10 +12,12 @@ export const metadata: Metadata = {
 };
 
 /**
- * Every URL outside a locale. The visitor's language is unknown here, so the
- * page speaks both and offers a way into each.
+ * Every unmatched URL, and every `notFound()`. It renders inside the
+ * pass-through root layout, so it is a complete document of its own. The
+ * visitor's language is unknown here, so the page speaks both and offers a
+ * way into each.
  */
-export default function GlobalNotFound() {
+export default function NotFound() {
   return (
     <html lang={htmlLang[defaultLocale]} className={fontVariables}>
       <body className="flex min-h-svh flex-col items-center justify-center gap-8 bg-void px-6 text-center text-paper">

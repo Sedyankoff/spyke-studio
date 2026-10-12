@@ -12,6 +12,9 @@ const buttonVariants = cva(
         /** Quiet companion to `primary` on dark imagery: an outline that only brightens. */
         ghost:
           "border border-paper/20 text-paper/85 duration-300 hover:border-paper/70 hover:text-paper",
+        /** The same quiet companion on paper surfaces. */
+        outline:
+          "border border-ink/20 text-ink duration-300 hover:border-ink hover:bg-ink hover:text-paper",
       },
       size: {
         sm: "h-9 px-4 text-[13px]",

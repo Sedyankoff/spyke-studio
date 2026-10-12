@@ -18,9 +18,9 @@ export function LocaleSwitch({
 }: LocaleSwitchProps) {
   const target = otherLocale(locale);
 
-  // A plain link: each locale has its own root layout, so switching is a
-  // full document load either way. On the way out it picks up the current
-  // #section, so the reader lands where they were.
+  // A plain link, so switching is a full document load with the other
+  // locale's <html lang>. On the way out it picks up the current #section,
+  // so the reader lands where they were.
   const keepSection = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.currentTarget.href = `/${target}${window.location.hash}`;
   };

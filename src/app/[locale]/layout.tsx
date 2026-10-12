@@ -82,9 +82,9 @@ export async function generateMetadata(
   };
 }
 
-// The page opens on the hero's black; the browser chrome matches it.
+// The page opens on the hero's paper; the browser chrome matches it.
 export const viewport: Viewport = {
-  themeColor: "#0b0a09",
+  themeColor: "#f5f2ec",
   colorScheme: "light",
 };
 

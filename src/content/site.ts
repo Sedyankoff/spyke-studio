@@ -11,17 +11,6 @@ export const siteConfig = {
     givenName: "Stoil",
     familyName: "Sedyankov",
   },
-  heroImage: {
-    src: "/images/hero.webp",
-    width: 1080,
-    height: 1440,
-    /**
-     * `object-position` for the full-bleed crop: which part of the photograph
-     * stays in frame. Tuned for this image (horizon, landscape and figure in
-     * the lower half).
-     */
-    focus: "48% 76%",
-  },
 } as const;
 
 /**
@@ -41,14 +30,11 @@ export const brandAssets = {
   },
 } satisfies Record<string, ImageAsset>;
 
-/**
- * The About portrait: a cut-out on a transparent ground, so the section's own
- * black shows through around it.
- */
+/** The About portrait: a studio photograph on a dark grey backdrop. */
 export const portrait = {
-  src: "/images/StoilSedyankov.png",
-  width: 2028,
-  height: 2120,
+  src: "/images/stoil-sedyankov-portrait.png",
+  width: 1366,
+  height: 1152,
 } satisfies ImageAsset;
 
 /**
@@ -56,8 +42,16 @@ export const portrait = {
  * not rendered anywhere until a real address is filled in here.
  */
 export const socialLinks: SocialLink[] = [
-  { platform: "linkedin", label: "LinkedIn", href: null },
-  { platform: "github", label: "GitHub", href: null },
+  {
+    platform: "linkedin",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/stoil-sedyankov-720657304",
+  },
+  {
+    platform: "github",
+    label: "GitHub",
+    href: "https://github.com/Sedyankoff",
+  },
   { platform: "portfolio", label: "Portfolio", href: null },
   {
     platform: "email",

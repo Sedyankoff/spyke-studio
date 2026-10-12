@@ -13,8 +13,9 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: defaultLocale,
     start_url: `/${defaultLocale}`,
     display: "standalone",
-    background_color: "#0b0a09",
-    theme_color: "#0b0a09",
+    // The page opens on the paper hero.
+    background_color: "#f5f2ec",
+    theme_color: "#f5f2ec",
     icons: [
       {
         src: "/images/icons/spyke-studio-icon-192.png",

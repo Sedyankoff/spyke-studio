@@ -3,7 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { SpykeMark } from "@/components/brand/spyke-logo";
+import { LivePreview } from "@/components/work/live-preview";
 import { ProjectWindow } from "@/components/work/project-window";
+import {
+  BAR_HEIGHT,
+  BELOW_BAR,
+  CAPTURE_ASPECT,
+} from "@/components/work/screen-sizes";
 import type { Dictionary } from "@/content/dictionary";
 import type { Project, ProjectId } from "@/content/schema";
 import { cn } from "@/lib/utils";
@@ -23,7 +29,7 @@ interface WorkstationProps {
   focusOnOpen: boolean;
   /** Live site for the open project, if it may be shown on this device. */
   live: string | null;
-  onLiveFail: () => void;
+  onLiveFail: (id: ProjectId) => void;
   hoverId: ProjectId | null;
   desktopRef: React.RefObject<HTMLDivElement | null>;
   onOpen: (id: ProjectId) => void;
@@ -74,6 +80,25 @@ export function Workstation({
     return () => observer.disconnect();
   }, [nearView]);
 
+  // The live site is framed here rather than in its window, and stays loaded
+  // once shown: stepping to the screenshots or to another project and back
+  // never reloads it. Only a different live site replaces it.
+  const liveNow = open && nearView && live ? { id: open.id, url: live } : null;
+  const [frame, setFrame] = useState<{ id: ProjectId; url: string } | null>(
+    null,
+  );
+  if (
+    liveNow &&
+    view === 0 &&
+    (frame?.id !== liveNow.id || frame.url !== liveNow.url)
+  ) {
+    setFrame(liveNow);
+  }
+  const frameShown = !!frame && liveNow?.id === frame.id && view === 0;
+  const frameProject = frame
+    ? projects.find((project) => project.id === frame.id)
+    : undefined;
+
   return (
     <div
       role="group"
@@ -84,11 +109,15 @@ export function Workstation({
       className={className}
     >
       {/* Display --------------------------------------------------------- */}
-      <div className="rounded-[1rem] border border-line-invert bg-[#12110f] p-1.5 shadow-[0_80px_140px_-70px_rgb(0_0_0/0.95)] sm:rounded-[1.25rem] sm:p-2.5 lg:rounded-[1.5rem] lg:p-3">
+      <div className="rounded-[0.875rem] border border-line-invert bg-[#12110f] p-1.5 shadow-[0_80px_140px_-70px_rgb(0_0_0/0.95)] sm:rounded-[1rem] sm:p-2 lg:rounded-[1.125rem] lg:p-2.5">
         <div
           ref={screenRef}
-          className="relative aspect-video overflow-hidden rounded-[0.625rem] bg-void ring-1 ring-black/60 sm:rounded-[0.75rem]"
+          className="relative overflow-hidden rounded-[0.5rem] bg-void ring-1 ring-black/60 sm:rounded-[0.625rem]"
         >
+          {/* The opening: the browser bar, then exactly one capture. */}
+          <div aria-hidden="true" className={BAR_HEIGHT} />
+          <div aria-hidden="true" className={CAPTURE_ASPECT} />
+
           <div ref={desktopRef} className="absolute inset-0 overflow-hidden">
             {/* Wallpaper: the site's engineering grid and the mark. */}
             <div aria-hidden="true" className="absolute inset-0">
@@ -130,14 +159,43 @@ export function Workstation({
                   work={work}
                   screens={active.screens}
                   origin={open.origin}
-                  live={nearView ? live : null}
-                  onLiveFail={onLiveFail}
+                  live={!!liveNow}
                   view={view}
                   focusOnOpen={focusOnOpen}
                   onStep={onStep}
                 />
               )}
             </AnimatePresence>
+
+            {/*
+              Laid exactly over the window's content area, below its browser
+              bar. It fades in once the window has grown and out before it
+              shrinks.
+            */}
+            {frame && frameProject && (
+              <div
+                aria-hidden={frameShown ? undefined : "true"}
+                inert={!frameShown}
+                className={cn(
+                  "absolute inset-x-0 bottom-0 z-30 transition-opacity ease-[var(--ease-spatial)]",
+                  BELOW_BAR,
+                  frameShown
+                    ? "opacity-100 delay-500 duration-300 starting:opacity-0"
+                    : "pointer-events-none opacity-0 duration-150",
+                )}
+              >
+                <LivePreview
+                  url={frame.url}
+                  title={`${work.projects[frame.id].name} — ${work.liveView}`}
+                  poster={frameProject.screens[0]?.desktop}
+                  loadingLabel={work.liveLoading}
+                  onFail={() => {
+                    setFrame(null);
+                    onLiveFail(frame.id);
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
 

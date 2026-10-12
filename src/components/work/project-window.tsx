@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { m } from "framer-motion";
-import { LivePreview } from "@/components/work/live-preview";
+import { SpykeLogo } from "@/components/brand/spyke-logo";
+import {
+  BAR_HEIGHT,
+  MONITOR_SIZES,
+  SCREEN_QUALITY,
+} from "@/components/work/screen-sizes";
 import type { Dictionary } from "@/content/dictionary";
 import type { Project, ProjectCopy, ProjectScreen } from "@/content/schema";
 import { cn } from "@/lib/utils";
@@ -16,9 +21,11 @@ interface ProjectWindowProps {
   work: Dictionary["work"];
   /** The project's screens, in order; the window shows their desktop capture. */
   screens: ProjectScreen[];
-  /** The live site to show ahead of the screenshots, when it may be framed here. */
-  live: string | null;
-  onLiveFail: () => void;
+  /**
+   * Whether the live site comes ahead of the screenshots. The frame itself
+   * belongs to the workstation, so it survives this window closing.
+   */
+  live: boolean;
   origin: string;
   view: number;
   /** Take focus on mount — only when the reader opened it, never on page load. */
@@ -30,7 +37,7 @@ interface ProjectWindowProps {
 /**
  * An application window on the Spyke desktop. It grows out of its icon to
  * fill the screen and shrinks back into it; inside is the real product — the
- * live site when it may be framed, then the desktop screenshots.
+ * desktop screenshots, under the live site when it may be framed.
  */
 export function ProjectWindow({
   project,
@@ -38,7 +45,6 @@ export function ProjectWindow({
   work,
   screens,
   live,
-  onLiveFail,
   origin,
   view,
   focusOnOpen,
@@ -51,12 +57,10 @@ export function ProjectWindow({
   // The live site, when there is one, is the first view; screenshots follow.
   const offset = live ? 1 : 0;
   const count = screens.length + offset;
-  const liveActive = !!live && view === 0;
+  const liveActive = live && view === 0;
   const current = liveActive ? null : screens[view - offset];
-
-  // Once opened, the frame stays mounted so stepping back doesn't reload it.
-  const [liveMounted, setLiveMounted] = useState(false);
-  if (liveActive && !liveMounted) setLiveMounted(true);
+  // Under the live site, the first screen holds the window until it loads.
+  const shown = Math.max(view - offset, 0);
 
   useEffect(() => {
     if (focusOnOpen) windowRef.current?.focus({ preventScroll: true });
@@ -104,28 +108,27 @@ export function ProjectWindow({
         )}
 
         {/*
-          A slim browser toolbar. Besides reading as a browser, it brings the
-          content area close to the captures' own proportions (a full-HD
-          browser viewport), so the screenshots lose almost nothing at the
-          sides.
+          A minimal browser bar: quiet window controls and the Spyke Studio
+          logo, centred. Its height is fixed, and the content below has the
+          captures' own proportions.
         */}
         <div
           aria-hidden="true"
-          className="relative flex h-[6%] min-h-3 shrink-0 items-center border-b border-paper/5 bg-[#1a1816] px-[1.6%]"
+          className={cn(
+            "relative flex shrink-0 items-center border-b border-paper/[0.06] bg-[#171513] px-2.5 sm:px-3",
+            BAR_HEIGHT,
+          )}
         >
-          <span className="flex h-full items-center gap-[0.35rem]">
+          <span className="flex items-center gap-1 sm:gap-1.5">
             {[0, 1, 2].map((dot) => (
               <span
                 key={dot}
-                className="aspect-square h-[30%] rounded-full bg-paper/20"
+                className="h-1.5 w-1.5 rounded-full bg-paper/15 lg:h-2 lg:w-2"
               />
             ))}
           </span>
-          <span className="absolute inset-x-[30%] top-1/2 hidden h-[62%] -translate-y-1/2 items-center justify-center gap-1.5 rounded-full bg-black/45 px-3 font-mono text-[10px] leading-none text-paper/55 sm:flex lg:text-[11px]">
-            {liveActive && (
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-red" />
-            )}
-            <span className="truncate">{project.urlLabel ?? copy.name}</span>
+          <span className="absolute inset-y-0 left-1/2 flex -translate-x-1/2 items-center py-1.5 lg:py-2">
+            <SpykeLogo tone="paper" sizes="64px" className="opacity-80" />
           </span>
         </div>
 
@@ -143,33 +146,13 @@ export function ProjectWindow({
             if (Math.abs(delta) > 40) onStep(delta < 0 ? 1 : -1);
           }}
         >
-          {live && liveMounted && (
-            <div
-              aria-hidden={liveActive ? undefined : "true"}
-              className={cn(
-                "absolute inset-0 transition-[opacity,transform] duration-500 ease-[var(--ease-spatial)]",
-                liveActive ? "opacity-100" : "pointer-events-none opacity-0",
-              )}
-              style={{
-                transform: `translate3d(${liveActive ? 0 : -3}%, 0, 0)`,
-              }}
-            >
-              <LivePreview
-                url={live}
-                title={`${copy.name} — ${work.liveView}`}
-                poster={screens[0]?.desktop}
-                onFail={onLiveFail}
-              />
-            </div>
-          )}
           {screens.map((screen, index) => {
-            const i = index + offset;
-            const shift = i === view ? 0 : i < view ? -1 : 1;
+            const shift = index === shown ? 0 : index < shown ? -1 : 1;
 
             return (
               <div
                 key={screen.id}
-                aria-hidden={shift === 0 ? undefined : "true"}
+                aria-hidden={shift === 0 && !liveActive ? undefined : "true"}
                 className={cn(
                   "absolute inset-0 transition-[opacity,transform] duration-500 ease-[var(--ease-spatial)]",
                   shift === 0 ? "opacity-100" : "pointer-events-none opacity-0",
@@ -180,7 +163,8 @@ export function ProjectWindow({
                   src={screen.desktop.src}
                   alt={copy.screens[screen.id]?.alt ?? ""}
                   fill
-                  sizes="(min-width: 1280px) 1040px, (min-width: 640px) 84vw, 100vw"
+                  sizes={MONITOR_SIZES}
+                  quality={SCREEN_QUALITY}
                   className="object-cover object-top"
                 />
               </div>

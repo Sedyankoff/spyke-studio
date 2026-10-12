@@ -156,13 +156,6 @@
       padding-block: 8rem;
     }
   }
-
-  .rule {
-    height: 1px;
-    width: 100%;
-    border: 0;
-    background: var(--color-line);
-  }
 }
 
 .skip-link {
@@ -201,124 +194,6 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Hero
-   The plate is the photograph: full height, anchored right, at least 80% of
-   the width and wider only when the image's own proportions call for it. On
-   landscape screens its leading edge falls away into the black of the
-   section, and a layered grade deepens the reading side. Black only —
-   nothing is lightened, nothing is blurred.
---------------------------------------------------------------------------- */
-
-/* The frame is a size container so the plate can be sized from its height. */
-.hero-frame {
-  container: hero / size;
-}
-
-.hero-photo {
-  filter: brightness(0.92) contrast(1.04) saturate(0.7);
-}
-
-.hero-plate {
-  width: 100%;
-  width: min(100cqw, max(80cqw, 100cqh * var(--hero-ratio)));
-}
-
-/* Landscape frames: a long, soft falloff from the plate into black. */
-@container hero (min-aspect-ratio: 1/1) {
-  .hero-plate {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      rgb(0 0 0 / 0.2) 8%,
-      rgb(0 0 0 / 0.55) 18%,
-      rgb(0 0 0 / 0.85) 28%,
-      #000 38%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      rgb(0 0 0 / 0.2) 8%,
-      rgb(0 0 0 / 0.55) 18%,
-      rgb(0 0 0 / 0.85) 28%,
-      #000 38%
-    );
-  }
-}
-
-.hero-grade {
-  background:
-    /* Reading side: deep at the edge, easing out by the centre. */
-    linear-gradient(
-      90deg,
-      rgb(11 10 9 / 0.78) 0%,
-      rgb(11 10 9 / 0.62) 18%,
-      rgb(11 10 9 / 0.4) 34%,
-      rgb(11 10 9 / 0.16) 50%,
-      rgb(11 10 9 / 0.04) 62%,
-      rgb(11 10 9 / 0) 72%
-    ),
-    /* A soft pool behind the headline for bright passages of the image. */
-    radial-gradient(
-      50% 55% at 20% 52%,
-      rgb(11 10 9 / 0.22) 0%,
-      rgb(11 10 9 / 0) 100%
-    ),
-    /* A light base so highlights never blow out under white type. */
-    linear-gradient(rgb(11 10 9 / 0.1), rgb(11 10 9 / 0.1));
-}
-
-/* Portrait screens: the copy spans the width, so the grade runs top to bottom. */
-@media (max-width: 767px) {
-  .hero-grade {
-    background:
-      linear-gradient(
-        180deg,
-        rgb(11 10 9 / 0.55) 0%,
-        rgb(11 10 9 / 0.45) 40%,
-        rgb(11 10 9 / 0.26) 70%,
-        rgb(11 10 9 / 0.14) 100%
-      ),
-      linear-gradient(
-        90deg,
-        rgb(11 10 9 / 0.2) 0%,
-        rgb(11 10 9 / 0) 80%
-      );
-  }
-}
-
-/* Type over photography: a wide, faint shadow that only shows where the
-   image behind a letter is bright. */
-.hero-copy {
-  text-shadow: 0 2px 28px rgb(11 10 9 / 0.35);
-}
-
-/* A faint dark falloff at the top edge that seats the header controls. */
-.hero-top {
-  background: linear-gradient(
-    to bottom,
-    rgb(11 10 9 / 0.45) 0%,
-    rgb(11 10 9 / 0.18) 50%,
-    rgb(11 10 9 / 0) 100%
-  );
-}
-
-/* ---------------------------------------------------------------------------
-   About
-   The portrait is a cut-out on a transparent ground, graded like the hero
-   photograph. It falls away into the section's black towards its foot, so
-   the crop at the bottom of the image never reads as an edge.
---------------------------------------------------------------------------- */
-
-.about-portrait {
-  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 98%);
-  mask-image: linear-gradient(to bottom, #000 58%, transparent 98%);
-}
-
-.about-photo {
-  filter: brightness(0.8) contrast(1.05) saturate(0.75);
-}
-
-/* ---------------------------------------------------------------------------
    Entrance choreography (first paint, hero only)
 --------------------------------------------------------------------------- */
 
@@ -333,21 +208,8 @@
   }
 }
 
-@keyframes spyke-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .animate-rise {
   animation: spyke-rise 720ms var(--ease-spatial) both;
-}
-
-.animate-fade {
-  animation: spyke-fade 900ms var(--ease-swift) both;
 }
 
 /* ---------------------------------------------------------------------------

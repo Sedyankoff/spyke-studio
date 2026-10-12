@@ -18,7 +18,7 @@ export const projects: Project[] = [
       "ASP.NET Core",
       "Entity Framework Core",
       "SQL Server",
-      "Next.js",
+      "React",
       "TypeScript",
       "Azure",
     ],
@@ -70,7 +70,7 @@ export const projects: Project[] = [
     url: "https://www.gnc.bg",
     urlLabel: "gnc.bg",
     embedUrl: "https://www.gnc.bg",
-    tech: ["Next.js", "TypeScript", "ASP.NET Core", "SQL Server", "Cloudflare"],
+    tech: ["React", "TypeScript", "ASP.NET Core", "SQL Server", "Cloudflare"],
     screens: [
       {
         id: "home",
@@ -94,8 +94,9 @@ export const projects: Project[] = [
     glyph: "BA",
     url: "https://www.bookapart.net",
     urlLabel: "bookapart.net",
-    embedUrl: "https://www.bookapart.net",
-    tech: ["Next.js", "TypeScript", "Tailwind CSS", "Leaflet", "Azure"],
+    // No `embedUrl`: framed, the site shows its own cookie-consent banner over
+    // the preview. The screenshots and the "Visit live site" link stand in.
+    tech: ["Next.js", "TypeScript", "Tailwind CSS", "Leaflet", "Supabase"],
     screens: [
       {
         id: "home",

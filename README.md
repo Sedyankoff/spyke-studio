@@ -20,9 +20,10 @@ npm run format     # prettier (with tailwind class sorting)
 src/
 ├── app/
 │   ├── [locale]/         # layout, page, opengraph-image — one route per locale
-│   ├── global-not-found.tsx  # the bilingual 404 for any unmatched URL
+│   ├── layout.tsx        # pass-through root layout; <html> comes from [locale] or not-found
+│   ├── not-found.tsx     # the bilingual 404 for any unmatched URL
 │   ├── fonts.ts          # next/font setup shared by both documents
-│   ├── globals.css       # tokens, type scale, hero and portrait grading, reveal system
+│   ├── globals.css       # tokens, type scale, hero background, portrait grading, reveal system
 │   └── robots.ts · sitemap.ts · manifest.ts · favicon.ico · icon.png · apple-icon.png
 ├── components/
 │   ├── brand/            # SpykeLogo / SpykeMark — the real logo artwork, never type
@@ -92,27 +93,35 @@ changes:
 
 ## Images
 
-| File                                      | Content                               |
-| ----------------------------------------- | ------------------------------------- |
-| `public/images/hero.webp`                 | Hero photograph, 1080×1440            |
-| `public/images/StoilSedyankov.png`        | About portrait, cut-out on alpha      |
-| `public/images/projects/<project>/*.webp` | Project screenshots, desktop + mobile |
+| File                                         | Content                                              |
+| -------------------------------------------- | ---------------------------------------------------- |
+| `public/images/stoil-sedyankov-portrait.png` | About portrait, studio photo on a dark grey backdrop |
+| `public/images/projects/<project>/*.webp`    | Project screenshots, desktop + mobile                |
 
-Screenshots are WebP; `next/image` serves AVIF/WebP variants from them. Each project in
+Screenshots are WebP; `next/image` serves AVIF/WebP variants from them at quality 90, with
+`sizes` matched to the rendered monitor and phone (`components/work/screen-sizes.ts`) so a
+variant is never scaled up. The monitor's opening is the browser bar plus a box at the desktop
+captures' 1919 × 919 ratio, and the phone's page area is 440 × 852 like the mobile captures, so
+both fill their screens by width; a taller capture loses only its bottom edge. Each project in
 `content/projects.ts` lists **screens**, and every screen pairs a desktop and a mobile capture of
 the same page (`*-desktop.webp` / `*-mobile.webp`) with their intrinsic sizes. The monitor shows
-the desktop capture and the phone the mobile one, so the two always move together. Desktop
-captures are a full-HD browser viewport (about 2:1); the browser toolbar inside the monitor keeps
-the content area close to that ratio.
+the desktop capture and the phone the mobile one, so the two always move together. Keep new
+desktop captures at a full-HD browser viewport (1919 × 919) and mobile captures at about 440 × 852.
 
 ### Live previews
 
-A project with an `embedUrl` (GNC Bulgaria, Bookapart) opens on its running site, framed inside
+A project with an `embedUrl` (currently GNC Bulgaria) opens on its running site, framed inside
 the monitor, on desktop pointers at 768px and wider. At build time `lib/embed.ts` reads the
 site's `X-Frame-Options` / CSP `frame-ancestors`; if framing is refused, or the frame does not
-load within 20 seconds, the project quietly falls back to its screenshots. The frame sits over
-the first screenshot, so a slow site never shows a blank screen. A project with a `url` also gets
-a "Visit live site" link that opens it in a new tab.
+load within 10 seconds, the project quietly falls back to its screenshots. Until it has loaded,
+and for 2.5 seconds after (a client-rendered site paints after `load`), the frame stays
+transparent over the first screenshot with a small loading status, so a slow site never shows a
+blank screen. The frame lives in the workstation rather than the project window,
+so once loaded it is not reloaded when the visitor switches projects and comes back. A project
+with a `url` also gets a "Visit project" button that opens it in a new tab.
+
+Bookapart has no `embedUrl` on purpose: framed, it shows its own cookie-consent banner, which the
+site provides no supported way to suppress. It uses its screenshots and the "Visit project" button.
 
 ## Content the site asserts
 
