@@ -41,9 +41,9 @@ export const en: Dictionary = {
     },
   },
   hero: {
-    statement: "Digital products, designed and built from scratch.",
-    statementLines: ["Digital products,", "designed and built", "from scratch."],
-    lead: "At Spyke Studio I design and build web applications and online stores — from the database to the interface.",
+    statement: "Digital products built from scratch.",
+    statementLines: ["Digital products,", "built from scratch."],
+    lead: "From the first idea to a working product — with attention to every detail.",
     primaryCta: "View Projects",
     secondaryCta: "Get in Touch",
   },
@@ -52,16 +52,16 @@ export const en: Dictionary = {
     name: "Stoil Sedyankov",
     role: "Software Engineer",
     paragraphs: [
-      "Since May 2024 I've worked as a programmer at Orak Engineering EOOD, developing and maintaining web applications with C#/.NET and React/TypeScript.",
-      "Most of my work is on REST APIs, databases and integrations with external services, and on the interfaces built on top of them.",
-      "I'm studying Software Engineering at Plovdiv University “Paisii Hilendarski”. My first formal experience was a C#/.NET internship at SKAI VIU in summer 2022.",
+      "I’ve been programming for over four years. I build web applications across the backend and the frontend, from databases and integrations to the infrastructure they run on.",
+      "Outside my main job, I work on my own projects and build solutions for clients. I like starting from an idea and carrying it all the way to a product that works, and my own projects are where I try out new technologies and approaches.",
+      "Spyke Studio grew out of Spyke Commerce, the e-commerce platform I built on my own for GNC Bulgaria. That project gave me the confidence to start offering my services independently.",
     ],
     portraitAlt: "Portrait of Stoil Sedyankov",
   },
   stack: {
     eyebrow: "Stack",
     title: "Technologies",
-    lead: "My primary stack is C#/.NET and React/TypeScript. Around it: databases, infrastructure, CI/CD and real-time systems.",
+    lead: "",
     groups: {
       languages: "Languages",
       frontend: "Frontend",
@@ -72,19 +72,17 @@ export const en: Dictionary = {
       realtime: "Real-time & distributed",
     },
     primaryLabel: "Primary",
-    capabilitiesTitle: "Engineering",
+    capabilitiesTitle: "Other areas",
     capabilities: {
       rest: "REST APIs",
-      multitenancy: "Multi-tenant architecture",
       integrations: "External API integrations",
-      realtime: "Real-time systems",
       cicd: "CI/CD",
     },
   },
   work: {
     eyebrow: "Work",
     title: "Selected projects",
-    lead: "An e-commerce platform, an online store built on it, and a site for finding stays in the Rhodope mountains.",
+    lead: "",
     open: "Show project",
     workstationLabel: "Spyke Studio workstation",
     liveView: "Live",
@@ -103,11 +101,11 @@ export const en: Dictionary = {
         screens: {
           products: {
             label: "Products",
-            alt: "Spyke Commerce admin panel listing products with search, filters and bulk editing",
+            alt: "Spyke Commerce admin panel",
           },
           "product-edit": {
             label: "Edit product",
-            alt: "Spyke Commerce product editor with image upload and product details",
+            alt: "Spyke Commerce product editor",
           },
           login: {
             label: "Sign in",
@@ -118,38 +116,38 @@ export const en: Dictionary = {
       "gnc-bulgaria": {
         name: "GNC Bulgaria",
         description:
-          "The official GNC online store for Bulgaria, built on Spyke Commerce. Shoppers browse supplements by category, search the catalog and see every price in both euro and leva.",
+          "The official GNC online store for Bulgaria, built on Spyke Commerce.",
         screens: {
           home: {
             label: "Home",
-            alt: "GNC Bulgaria homepage with category navigation and featured products",
+            alt: "GNC Bulgaria homepage",
           },
           category: {
             label: "Category",
-            alt: "GNC Bulgaria category page with product cards, filters and sorting",
+            alt: "GNC Bulgaria category page",
           },
           product: {
             label: "Product",
-            alt: "GNC Bulgaria product page with an image gallery and the price in euro",
+            alt: "GNC Bulgaria product page",
           },
         },
       },
       bookapart: {
         name: "Bookapart",
         description:
-          "A site for finding apartments, studios and guest houses in the Rhodope mountains. Guests filter stays, view each place in detail, contact hosts directly and explore nearby landmarks on a map.",
+          "A site for finding apartments, studios and guest houses in the Rhodope mountains. Users contact hosts directly and explore nearby landmarks.",
         screens: {
           home: {
             label: "Home",
-            alt: "Bookapart homepage over an aerial photo of the Rhodope mountains",
+            alt: "Bookapart homepage",
           },
           places: {
             label: "Stays",
-            alt: "Bookapart list of stays with filters for studios and apartments",
+            alt: "Bookapart list of stays",
           },
           place: {
             label: "Stay",
-            alt: "Bookapart page for a single apartment with its rating, location and photo gallery",
+            alt: "Bookapart page for a single apartment ",
           },
           landmarks: {
             label: "Landmarks",
@@ -176,14 +174,6 @@ export const en: Dictionary = {
           "React",
           "TypeScript",
           "SQL Server",
-          "PostgreSQL",
-        ],
-        areas: [
-          "REST APIs",
-          "Databases (SQL Server, PostgreSQL) and Redis caching",
-          "Authentication and role-based access",
-          "External API integrations",
-          "CI/CD (GitHub Actions)",
         ],
       },
       skai: {
@@ -197,8 +187,8 @@ export const en: Dictionary = {
   },
   footer: {
     owner: "Stoil Sedyankov",
-    tagline: "Stoil Sedyankov — Software Engineer. Plovdiv, Bulgaria.",
+    tagline: "",
     rights: "All rights reserved.",
-    builtBy: "Designed and built by Stoil Sedyankov",
+    builtBy: "",
   },
 };

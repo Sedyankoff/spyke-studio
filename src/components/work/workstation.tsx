@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { SpykeMark } from "@/components/brand/spyke-logo";
-import { LivePreview } from "@/components/work/live-preview";
+import { SpykeLogo, SpykeMark } from "@/components/brand/spyke-logo";
+import { LiveFrames, type LiveFrame } from "@/components/work/live-frames";
 import { ProjectWindow } from "@/components/work/project-window";
 import {
-  BAR_HEIGHT,
-  BELOW_BAR,
   CAPTURE_ASPECT,
+  DESKTOP_VIEWPORT,
+  MONITOR_SIZES,
 } from "@/components/work/screen-sizes";
 import type { Dictionary } from "@/content/dictionary";
 import type { Project, ProjectId } from "@/content/schema";
@@ -27,8 +26,13 @@ interface WorkstationProps {
   view: number;
   /** Whether the next window to open takes focus — never on page load. */
   focusOnOpen: boolean;
-  /** Live site for the open project, if it may be shown on this device. */
-  live: string | null;
+  /** Whether the open project's live site leads its views on this device. */
+  live: boolean;
+  /**
+   * The live site to frame now — only while it is the view on show and the
+   * screen is near the viewport.
+   */
+  frame: LiveFrame | null;
   onLiveFail: (id: ProjectId) => void;
   hoverId: ProjectId | null;
   desktopRef: React.RefObject<HTMLDivElement | null>;
@@ -51,6 +55,7 @@ export function Workstation({
   view,
   focusOnOpen,
   live,
+  frame,
   onLiveFail,
   hoverId,
   desktopRef,
@@ -64,41 +69,6 @@ export function Workstation({
     ? projects.find((project) => project.id === open.id)
     : undefined;
 
-  // A live site is only loaded once the screen is near the viewport.
-  const screenRef = useRef<HTMLDivElement>(null);
-  const [nearView, setNearView] = useState(false);
-  useEffect(() => {
-    const screen = screenRef.current;
-    if (!screen || nearView) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setNearView(true);
-      },
-      { rootMargin: "300px 0px" },
-    );
-    observer.observe(screen);
-    return () => observer.disconnect();
-  }, [nearView]);
-
-  // The live site is framed here rather than in its window, and stays loaded
-  // once shown: stepping to the screenshots or to another project and back
-  // never reloads it. Only a different live site replaces it.
-  const liveNow = open && nearView && live ? { id: open.id, url: live } : null;
-  const [frame, setFrame] = useState<{ id: ProjectId; url: string } | null>(
-    null,
-  );
-  if (
-    liveNow &&
-    view === 0 &&
-    (frame?.id !== liveNow.id || frame.url !== liveNow.url)
-  ) {
-    setFrame(liveNow);
-  }
-  const frameShown = !!frame && liveNow?.id === frame.id && view === 0;
-  const frameProject = frame
-    ? projects.find((project) => project.id === frame.id)
-    : undefined;
-
   return (
     <div
       role="group"
@@ -109,13 +79,9 @@ export function Workstation({
       className={className}
     >
       {/* Display --------------------------------------------------------- */}
-      <div className="rounded-[0.875rem] border border-line-invert bg-[#12110f] p-1.5 shadow-[0_80px_140px_-70px_rgb(0_0_0/0.95)] sm:rounded-[1rem] sm:p-2 lg:rounded-[1.125rem] lg:p-2.5">
-        <div
-          ref={screenRef}
-          className="relative overflow-hidden rounded-[0.5rem] bg-void ring-1 ring-black/60 sm:rounded-[0.625rem]"
-        >
-          {/* The opening: the browser bar, then exactly one capture. */}
-          <div aria-hidden="true" className={BAR_HEIGHT} />
+      <div className="rounded-[0.875rem] border border-line-invert bg-[#12110f] p-1.5 pb-0 shadow-[0_80px_140px_-70px_rgb(0_0_0/0.95)] sm:rounded-[1rem] sm:p-2 sm:pb-0 lg:rounded-[1.125rem] lg:p-2.5 lg:pb-0">
+        <div className="relative overflow-hidden rounded-[0.5rem] bg-void ring-1 ring-black/60 sm:rounded-[0.625rem]">
+          {/* The opening: exactly one capture. */}
           <div aria-hidden="true" className={CAPTURE_ASPECT} />
 
           <div ref={desktopRef} className="absolute inset-0 overflow-hidden">
@@ -159,7 +125,7 @@ export function Workstation({
                   work={work}
                   screens={active.screens}
                   origin={open.origin}
-                  live={!!liveNow}
+                  live={live}
                   view={view}
                   focusOnOpen={focusOnOpen}
                   onStep={onStep}
@@ -168,44 +134,32 @@ export function Workstation({
             </AnimatePresence>
 
             {/*
-              Laid exactly over the window's content area, below its browser
-              bar. It fades in once the window has grown and out before it
-              shrinks.
+              Laid exactly over the window. The frame fades in once the
+              window has grown and out before it shrinks.
             */}
-            {frame && frameProject && (
-              <div
-                aria-hidden={frameShown ? undefined : "true"}
-                inert={!frameShown}
-                className={cn(
-                  "absolute inset-x-0 bottom-0 z-30 transition-opacity ease-[var(--ease-spatial)]",
-                  BELOW_BAR,
-                  frameShown
-                    ? "opacity-100 delay-500 duration-300 starting:opacity-0"
-                    : "pointer-events-none opacity-0 duration-150",
-                )}
-              >
-                <LivePreview
-                  url={frame.url}
-                  title={`${work.projects[frame.id].name} — ${work.liveView}`}
-                  poster={frameProject.screens[0]?.desktop}
-                  loadingLabel={work.liveLoading}
-                  onFail={() => {
-                    setFrame(null);
-                    onLiveFail(frame.id);
-                  }}
-                />
-              </div>
-            )}
+            <LiveFrames
+              current={frame}
+              viewport={DESKTOP_VIEWPORT}
+              titleOf={(id) => `${work.projects[id].name} — ${work.liveView}`}
+              posterOf={(id) =>
+                projects.find((project) => project.id === id)?.screens[0]
+                  ?.desktop
+              }
+              posterSizes={MONITOR_SIZES}
+              loadingLabel={work.liveLoading}
+              shownClassName="delay-500"
+              onFail={onLiveFail}
+            />
           </div>
         </div>
 
-        {/* Chin */}
+        {/* Chin, with the studio's name on it */}
         <div
           aria-hidden="true"
-          className="hidden h-6 items-center justify-center sm:flex lg:h-8"
+          className="flex h-6 items-center justify-center sm:h-8 lg:h-10"
         >
-          <span className="block h-2.5 opacity-30 lg:h-3">
-            <SpykeMark sizes="12px" />
+          <span className="block h-2.5 opacity-55 sm:h-3 lg:h-3.5">
+            <SpykeLogo tone="paper" sizes="48px" />
           </span>
         </div>
       </div>

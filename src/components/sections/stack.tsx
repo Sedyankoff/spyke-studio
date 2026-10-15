@@ -1,9 +1,7 @@
 import {
   ArrowLeftRight,
   GitBranch,
-  Layers,
   Plug,
-  Waves,
   Webhook,
 } from "lucide-react";
 import { Section } from "@/components/layout/section";
@@ -21,8 +19,6 @@ const capabilityIcons: Record<
   React.ComponentType<{ className?: string }>
 > = {
   rest: Webhook,
-  multitenancy: Layers,
-  realtime: Waves,
   integrations: Plug,
   cicd: GitBranch,
 };

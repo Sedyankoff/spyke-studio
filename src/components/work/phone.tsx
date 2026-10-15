@@ -3,14 +3,30 @@
 import Image from "next/image";
 import { AnimatePresence, m } from "framer-motion";
 import { SpykeMark } from "@/components/brand/spyke-logo";
-import { PHONE_SIZES, SCREEN_QUALITY } from "@/components/work/screen-sizes";
-import type { ImageAsset } from "@/content/schema";
+import { LiveFrames, type LiveFrame } from "@/components/work/live-frames";
+import {
+  MOBILE_ASPECT,
+  MOBILE_VIEWPORT,
+  PHONE_SIZES,
+  SCREEN_QUALITY,
+} from "@/components/work/screen-sizes";
+import type { ImageAsset, ProjectId } from "@/content/schema";
 import { cn } from "@/lib/utils";
+
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 interface PhoneProps {
   /** The mobile view to show; nothing selected leaves the phone on standby. */
   image: ImageAsset | null;
   alt: string;
+  /**
+   * The live site to show over the capture, laid out at a real phone width
+   * so it serves its mobile layout. Captures stay underneath as the fallback.
+   */
+  frame: LiveFrame | null;
+  frameTitleOf: (id: ProjectId) => string;
+  posterOf: (id: ProjectId) => ImageAsset | undefined;
+  onLiveFail: (id: ProjectId) => void;
   className?: string;
 }
 
@@ -21,7 +37,15 @@ interface PhoneProps {
  * edge; the body takes its height from that. Every other dimension is a
  * percentage of the body, so the device keeps its proportions at any size.
  */
-export function Phone({ image, alt, className }: PhoneProps) {
+export function Phone({
+  image,
+  alt,
+  frame,
+  frameTitleOf,
+  posterOf,
+  onLiveFail,
+  className,
+}: PhoneProps) {
   return (
     <figure
       className={cn(
@@ -49,15 +73,18 @@ export function Phone({ image, alt, className }: PhoneProps) {
           <span className="absolute top-1/2 left-1/2 h-[56%] w-[30%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-black" />
         </div>
 
-        <div className="relative aspect-[440/852]">
+        <div className={cn("relative", MOBILE_ASPECT)}>
           <AnimatePresence initial={false}>
             {image ? (
               <m.div
                 key={image.src}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.55, delay: 0.24, ease: EASE },
+                }}
+                exit={{ opacity: 0, transition: { duration: 0.25 } }}
                 className="absolute inset-0 bg-paper"
               >
                 <Image
@@ -85,6 +112,16 @@ export function Phone({ image, alt, className }: PhoneProps) {
               </m.div>
             )}
           </AnimatePresence>
+
+          <LiveFrames
+            current={frame}
+            viewport={MOBILE_VIEWPORT}
+            titleOf={frameTitleOf}
+            posterOf={posterOf}
+            posterSizes={PHONE_SIZES}
+            shownClassName="delay-300"
+            onFail={onLiveFail}
+          />
         </div>
       </div>
     </figure>

@@ -3,12 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { m } from "framer-motion";
-import { SpykeLogo } from "@/components/brand/spyke-logo";
-import {
-  BAR_HEIGHT,
-  MONITOR_SIZES,
-  SCREEN_QUALITY,
-} from "@/components/work/screen-sizes";
+import { MONITOR_SIZES, SCREEN_QUALITY } from "@/components/work/screen-sizes";
 import type { Dictionary } from "@/content/dictionary";
 import type { Project, ProjectCopy, ProjectScreen } from "@/content/schema";
 import { cn } from "@/lib/utils";
@@ -36,8 +31,9 @@ interface ProjectWindowProps {
 
 /**
  * An application window on the Spyke desktop. It grows out of its icon to
- * fill the screen and shrinks back into it; inside is the real product — the
- * desktop screenshots, under the live site when it may be framed.
+ * fill the screen and shrinks back into it; inside is the real product, edge
+ * to edge — the desktop screenshots, under the live site when it may be
+ * framed.
  */
 export function ProjectWindow({
   project,
@@ -107,32 +103,6 @@ export function ProjectWindow({
           </p>
         )}
 
-        {/*
-          A minimal browser bar: quiet window controls and the Spyke Studio
-          logo, centred. Its height is fixed, and the content below has the
-          captures' own proportions.
-        */}
-        <div
-          aria-hidden="true"
-          className={cn(
-            "relative flex shrink-0 items-center border-b border-paper/[0.06] bg-[#171513] px-2.5 sm:px-3",
-            BAR_HEIGHT,
-          )}
-        >
-          <span className="flex items-center gap-1 sm:gap-1.5">
-            {[0, 1, 2].map((dot) => (
-              <span
-                key={dot}
-                className="h-1.5 w-1.5 rounded-full bg-paper/15 lg:h-2 lg:w-2"
-              />
-            ))}
-          </span>
-          <span className="absolute inset-y-0 left-1/2 flex -translate-x-1/2 items-center py-1.5 lg:py-2">
-            <SpykeLogo tone="paper" sizes="64px" className="opacity-80" />
-          </span>
-        </div>
-
-        {/* Content ----------------------------------------------------- */}
         <div
           className="relative min-h-0 flex-1 touch-pan-y overflow-hidden bg-[#0c0b0a]"
           onPointerDown={(event) => {
@@ -157,7 +127,11 @@ export function ProjectWindow({
                   "absolute inset-0 transition-[opacity,transform] duration-500 ease-[var(--ease-spatial)]",
                   shift === 0 ? "opacity-100" : "pointer-events-none opacity-0",
                 )}
-                style={{ transform: `translate3d(${shift * 3}%, 0, 0)` }}
+                // At rest the screen has no transform at all: a composited
+                // layer can land between device pixels and resample the image.
+                style={{
+                  transform: shift === 0 ? "none" : `translateX(${shift * 3}%)`,
+                }}
               >
                 <Image
                   src={screen.desktop.src}

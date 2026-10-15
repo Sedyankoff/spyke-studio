@@ -14,6 +14,7 @@ export const projects: Project[] = [
   {
     id: "spyke-commerce",
     glyph: "SC",
+    logo: shot("spyke-commerce/logo-trimmed.png", 647, 262),
     tech: [
       "ASP.NET Core",
       "Entity Framework Core",
@@ -67,10 +68,11 @@ export const projects: Project[] = [
   {
     id: "gnc-bulgaria",
     glyph: "GNC",
+    logo: shot("gnc/logo.png", 920, 244),
     url: "https://www.gnc.bg",
     urlLabel: "gnc.bg",
     embedUrl: "https://www.gnc.bg",
-    tech: ["React", "TypeScript", "ASP.NET Core", "SQL Server", "Cloudflare"],
+    tech: ["React", "TypeScript", "ASP.NET Core", "SQL Server", "Azure"],
     screens: [
       {
         id: "home",
@@ -92,10 +94,11 @@ export const projects: Project[] = [
   {
     id: "bookapart",
     glyph: "BA",
+    logo: shot("bookapart/logo-trimmed.png", 397, 454),
     url: "https://www.bookapart.net",
     urlLabel: "bookapart.net",
-    // No `embedUrl`: framed, the site shows its own cookie-consent banner over
-    // the preview. The screenshots and the "Visit live site" link stand in.
+    // Framed, the site asks for cookie consent as it would on any first visit.
+    embedUrl: "https://www.bookapart.net",
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Leaflet", "Supabase"],
     screens: [
       {

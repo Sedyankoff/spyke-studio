@@ -26,11 +26,7 @@ export default async function HomePage(props: PageProps<"/[locale]">) {
         <Work copy={dictionary.work} embeddable={embeddable} />
         <Experience copy={dictionary.experience} common={dictionary.common} />
       </main>
-      <Footer
-        copy={dictionary.footer}
-        nav={dictionary.nav}
-        common={dictionary.common}
-      />
+      <Footer copy={dictionary.footer} nav={dictionary.nav} />
     </>
   );
 }

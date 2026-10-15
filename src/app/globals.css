@@ -34,6 +34,9 @@
 @theme inline {
   --font-display: var(--font-oswald), "Arial Narrow", ui-sans-serif, sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* Long-form reading text; Inter stands in until Geist has loaded. */
+  --font-prose: var(--font-geist), var(--font-inter), ui-sans-serif, system-ui,
+    sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
 }
 
@@ -195,21 +198,96 @@
 
 /* ---------------------------------------------------------------------------
    Entrance choreography (first paint, hero only)
+   Pure CSS on server-rendered markup: it starts with the first paint, never
+   waits for hydration, and the `both` fill keeps every element in its start
+   state through its delay, so nothing flashes in its final position first.
+   Only transform and opacity move. With reduced motion none of it applies
+   and the hero is simply there.
 --------------------------------------------------------------------------- */
 
-@keyframes spyke-rise {
+@keyframes hero-accent {
   from {
-    opacity: 0;
-    transform: translate3d(0, 20px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+    transform: scaleX(0);
   }
 }
 
-.animate-rise {
-  animation: spyke-rise 720ms var(--ease-spatial) both;
+/* Each headline line rises out of its own mask. */
+@keyframes hero-line {
+  from {
+    transform: translate3d(0, 108%, 0);
+  }
+}
+
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The dark surface (with its red edge) settles up into place... */
+@keyframes hero-surface {
+  from {
+    transform: translate3d(0, 7%, 0);
+  }
+}
+
+/* ...and the red edge draws along its own slope: `--edge-rise` over the full
+   width (17% of the hero from sm up, a fixed rise on phones). */
+@keyframes hero-edge {
+  from {
+    transform: translate3d(-100%, var(--edge-rise, 17%), 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-accent {
+    transform-origin: left center;
+    animation: hero-accent 700ms var(--ease-spatial) 80ms both;
+  }
+
+  .hero-line {
+    animation: hero-line 1000ms var(--ease-spatial) both;
+    animation-delay: calc(180ms + var(--line, 0) * 110ms);
+  }
+
+  .hero-surface {
+    animation: hero-surface 1200ms var(--ease-spatial) 120ms both;
+  }
+
+  .hero-edge {
+    animation: hero-edge 1300ms var(--ease-spatial) 320ms both;
+  }
+
+  .hero-glow {
+    animation: hero-fade 1400ms var(--ease-swift) 200ms both;
+  }
+
+  .hero-lead {
+    animation: hero-fade-up 800ms var(--ease-spatial) 620ms both;
+  }
+
+  .hero-cta {
+    animation: hero-fade-up 800ms var(--ease-spatial) 740ms both;
+  }
+}
+
+/*
+ * A line's mask. The padding (taken back by the negative margin, so the
+ * layout is unchanged) leaves room for Cyrillic breves and descenders and the
+ * comma, which reach past the tight line box.
+ */
+.hero-mask {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.12em 0.14em;
+  margin-block: -0.12em -0.14em;
 }
 
 /* ---------------------------------------------------------------------------
@@ -258,6 +336,12 @@
 [data-reveal="scale"].is-out {
   opacity: 0;
   transform: scale(1.04);
+}
+
+/* Grows into place: for small, self-contained things like the portrait. */
+[data-reveal="pop"].is-out {
+  opacity: 0;
+  transform: scale(0.9);
 }
 
 [data-rd="1"] {
