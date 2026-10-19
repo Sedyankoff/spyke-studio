@@ -36,10 +36,9 @@ export async function generateMetadata(
 
   return {
     metadataBase: new URL(siteConfig.url),
-    // The tab reads just the studio's name; the social cards below keep the
-    // fuller, per-language title.
+    // The tab and the social cards below read the same title.
     title: {
-      default: siteConfig.name,
+      default: dictionary.meta.title,
       template: `%s — ${siteConfig.name}`,
     },
     description: dictionary.meta.description,

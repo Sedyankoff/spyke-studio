@@ -11,7 +11,7 @@ export function generateStaticParams() {
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = `${siteConfig.name} — ${siteConfig.person.givenName} ${siteConfig.person.familyName}`;
+export const alt = `${siteConfig.name} | ${siteConfig.person.givenName} ${siteConfig.person.familyName}`;
 
 const LOGO_HEIGHT = 64;
 
@@ -68,24 +68,18 @@ export default async function OpenGraphImage({
             color: "rgba(245,242,236,0.72)",
           }}
         >
-          {`${dictionary.about.name} — ${dictionary.about.role}`}
+          {dictionary.about.name}
         </div>
       </div>
 
+      {/* The red rule closes the card; it carries no text. */}
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
           borderTop: "2px solid #f40618",
           paddingTop: 26,
-          fontSize: 22,
-          color: "rgba(245,242,236,0.6)",
         }}
-      >
-        <div style={{ display: "flex" }}>C#/.NET · React · TypeScript</div>
-        <div style={{ display: "flex" }}>{new URL(siteConfig.url).host}</div>
-      </div>
+      />
     </div>,
     size,
   );

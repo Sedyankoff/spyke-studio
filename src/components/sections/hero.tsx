@@ -17,8 +17,10 @@ export function Hero({ copy }: { copy: Dictionary["hero"] }) {
       id="hero"
       labelledBy="hero-title"
       // Phones: a composed height rather than the whole (tall, narrow)
-      // screen; About's charcoal continues the dark area below it.
-      className="isolate flex min-h-[clamp(40rem,100svh,44rem)] flex-col overflow-hidden bg-[#f7f6f3] text-[#191919] sm:min-h-svh"
+      // screen; About's charcoal continues the dark area below it. From sm
+      // the whole screen, but never under 33rem: in a landscape phone the
+      // diagonal (a proportion of this height) would reach the headline.
+      className="isolate flex min-h-[clamp(40rem,100svh,44rem)] flex-col overflow-hidden bg-[#f7f6f3] text-[#191919] sm:min-h-[max(100svh,33rem)]"
     >
       {/*
         Dark lower section, with the red diagonal along its top edge. From sm
@@ -59,8 +61,11 @@ export function Hero({ copy }: { copy: Dictionary["hero"] }) {
         <h1
           id="hero-title"
           // Phones: sized from the width, so the longest word («РАЗРАБОТЕНИ»,
-          // ~7.2em) just fits the measure at 320–639px.
-          className="relative z-10 max-w-[1150px] text-[clamp(2.125rem,calc(13.2vw_-_6px),3.25rem)] leading-[0.98] font-black tracking-[-0.035em] uppercase sm:text-[clamp(2.25rem,5.6vw,6rem)]"
+          // ~7.2em) just fits the measure at 320–639px. From lg the four rows
+          // are also capped by the height: the diagonal is placed by the
+          // hero's height, so a wide, short window would otherwise run the
+          // headline into it. Where there is room the cap is above 5.6vw.
+          className="relative z-10 max-w-[1150px] text-[clamp(2.125rem,calc(13.2vw_-_6px),3.25rem)] leading-[0.98] font-black tracking-[-0.035em] uppercase sm:text-[clamp(2.25rem,5.6vw,6rem)] lg:text-[clamp(2.25rem,min(5.6vw,calc(15.8svh_-_2.5rem)),6rem)]"
         >
           {copy.statementLines.map((rows, index) => (
             <span key={rows.join(" ")} className="hero-mask">
