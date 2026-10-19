@@ -2,9 +2,9 @@ import type { Dictionary } from "@/content/dictionary";
 
 export const en: Dictionary = {
   meta: {
-    title: "Stoil Sedyankov — Software Engineer | Spyke Studio",
+    title: "Spyke Studio | Stoil Sedyankov",
     description:
-      "Stoil Sedyankov — software engineer in Plovdiv, Bulgaria. Web applications with C#/.NET and React/TypeScript: backend, frontend, REST APIs, databases and integrations.",
+      "Spyke Studio — Stoil Sedyankov, Plovdiv, Bulgaria. Web applications with C#/.NET and React/TypeScript: backend, frontend, REST APIs, databases and integrations.",
     keywords: [
       "Stoil Sedyankov",
       "software engineer",
