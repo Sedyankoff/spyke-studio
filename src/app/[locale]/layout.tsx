@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
+import { Analytics } from "@vercel/analytics/next";
 import { CommandPanel } from "@/components/command/command-panel";
 import { CommandProvider } from "@/components/command/command-context";
 import { PageShell } from "@/components/command/page-shell";
@@ -35,7 +36,12 @@ export async function generateMetadata(
 
   return {
     metadataBase: new URL(siteConfig.url),
-    title: dictionary.meta.title,
+    // The tab reads just the studio's name; the social cards below keep the
+    // fuller, per-language title.
+    title: {
+      default: siteConfig.name,
+      template: `%s — ${siteConfig.name}`,
+    },
     description: dictionary.meta.description,
     applicationName: siteConfig.name,
     authors: [
@@ -125,6 +131,8 @@ export default async function LocaleLayout(props: LayoutProps<"/[locale]">) {
         </MotionProvider>
 
         <RevealObserver />
+        {/* Vercel Web Analytics: page views only, no cookies; inert in dev. */}
+        <Analytics />
 
         <script
           type="application/ld+json"

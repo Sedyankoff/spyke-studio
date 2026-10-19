@@ -24,6 +24,8 @@ interface PhoneProps {
    * so it serves its mobile layout. Captures stay underneath as the fallback.
    */
   frame: LiveFrame | null;
+  /** A live site to load hidden, ahead of the reader opening it. */
+  warmFrame: LiveFrame | null;
   frameTitleOf: (id: ProjectId) => string;
   posterOf: (id: ProjectId) => ImageAsset | undefined;
   onLiveFail: (id: ProjectId) => void;
@@ -41,6 +43,7 @@ export function Phone({
   image,
   alt,
   frame,
+  warmFrame,
   frameTitleOf,
   posterOf,
   onLiveFail,
@@ -115,6 +118,7 @@ export function Phone({
 
           <LiveFrames
             current={frame}
+            warm={warmFrame}
             viewport={MOBILE_VIEWPORT}
             titleOf={frameTitleOf}
             posterOf={posterOf}

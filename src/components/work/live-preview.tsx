@@ -4,15 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { SCREEN_QUALITY } from "@/components/work/screen-sizes";
 import type { ImageAsset } from "@/content/schema";
+import { guardScrollFromFrames } from "@/lib/frame-scroll-guard";
 import { cn } from "@/lib/utils";
 
 /** A frame that has not loaded by now is treated as unavailable. */
 const LOAD_TIMEOUT = 10_000;
 /**
- * `load` only means the document is in; a client-rendered site paints its
- * content after that, so the screenshot stays up a little longer.
+ * `load` only means the document is in; the sites still fetch their data and
+ * paint after it, so the screenshot stays up a little longer. Measured, the
+ * framed sites look complete 1.0–1.5s after `load`. On a slow connection the
+ * rest arrives as slowly as the document did, so the wait grows with the time
+ * the document took — up to the maximum.
  */
-const SETTLE_DELAY = 2_500;
+const SETTLE_MIN = 1_500;
+const SETTLE_MAX = 2_500;
 
 interface LivePreviewProps {
   url: string;
@@ -59,7 +64,10 @@ export function LivePreview({
   const [size, setSize] = useState<{ width: number; height: number } | null>(
     null,
   );
-  const [loaded, setLoaded] = useState(false);
+  // When the frame was put in the page, and how long its document then took.
+  const startRef = useRef<number | null>(null);
+  const [loadTime, setLoadTime] = useState<number | null>(null);
+  const loaded = loadTime !== null;
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
@@ -81,6 +89,9 @@ export function LivePreview({
     return () => observer.disconnect();
   }, []);
 
+  // The framed site can scroll this page; see `frame-scroll-guard`.
+  useEffect(() => guardScrollFromFrames(), []);
+
   useEffect(() => {
     if (loaded) return;
     const timer = window.setTimeout(() => failRef.current(), LOAD_TIMEOUT);
@@ -88,10 +99,11 @@ export function LivePreview({
   }, [loaded]);
 
   useEffect(() => {
-    if (!loaded) return;
-    const timer = window.setTimeout(() => setRevealed(true), SETTLE_DELAY);
+    if (loadTime === null) return;
+    const settle = Math.min(Math.max(loadTime, SETTLE_MIN), SETTLE_MAX);
+    const timer = window.setTimeout(() => setRevealed(true), settle);
     return () => window.clearTimeout(timer);
-  }, [loaded]);
+  }, [loadTime]);
 
   const scale = size ? Math.min(1, size.width / viewport) : 1;
 
@@ -130,10 +142,22 @@ export function LivePreview({
         <iframe
           src={url}
           title={title}
+          data-live-frame=""
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-          onLoad={() => setLoaded(true)}
+          ref={(node) => {
+            if (node && startRef.current === null) {
+              startRef.current = performance.now();
+            }
+          }}
+          onLoad={() =>
+            setLoadTime(
+              (time) =>
+                time ??
+                performance.now() - (startRef.current ?? performance.now()),
+            )
+          }
           className={cn(
             "absolute top-0 left-0 origin-top-left border-0 transition-opacity duration-500",
             revealed ? "opacity-100" : "pointer-events-none opacity-0",

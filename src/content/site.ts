@@ -30,6 +30,17 @@ export const brandAssets = {
   },
 } satisfies Record<string, ImageAsset>;
 
+/**
+ * The hero sculpture: the S and arrow as a black and red object, on a
+ * transparent ground. The artwork leaves clear margins in the canvas, 16% of
+ * its width on the left and 14.6% on the right; the hero offsets by them.
+ */
+export const heroSculpture = {
+  src: "/images/hero-3d-model.png",
+  width: 1338,
+  height: 1175,
+} satisfies ImageAsset;
+
 /** The About portrait: a studio photograph on a dark grey backdrop. */
 export const portrait = {
   src: "/images/stoil-sedyankov-portrait.png",

@@ -13,6 +13,11 @@ export interface LiveFrame {
 interface LiveFramesProps {
   /** The live site to show now; `null` hides every frame without unloading it. */
   current: LiveFrame | null;
+  /**
+   * A site the reader is about to open: loaded hidden ahead of time, so it is
+   * ready, or nearly, when it comes on.
+   */
+  warm?: LiveFrame | null;
   /** CSS width each site is laid out at (see `LivePreview`). */
   viewport: number;
   titleOf: (id: ProjectId) => string;
@@ -26,12 +31,14 @@ interface LiveFramesProps {
 
 /**
  * The live sites of one device, laid exactly over its screen. A site stays
- * loaded once shown: stepping to the screenshots or to another project and
- * back never reloads it, and switching projects never flashes a stale page —
+ * loaded once shown or warmed: stepping to the screenshots or to another
+ * project and back never reloads it, and switching projects never flashes a
+ * stale page —
  * the frame on show is always the selected project's own.
  */
 export function LiveFrames({
   current,
+  warm = null,
   viewport,
   titleOf,
   posterOf,
@@ -42,13 +49,20 @@ export function LiveFrames({
 }: LiveFramesProps) {
   const [frames, setFrames] = useState<LiveFrame[]>([]);
 
-  if (
-    current &&
-    !frames.some(
-      (frame) => frame.id === current.id && frame.url === current.url,
-    )
-  ) {
-    setFrames([...frames.filter((frame) => frame.id !== current.id), current]);
+  const missing = [current, warm?.id === current?.id ? null : warm].filter(
+    (wanted): wanted is LiveFrame =>
+      !!wanted &&
+      !frames.some(
+        (frame) => frame.id === wanted.id && frame.url === wanted.url,
+      ),
+  );
+  if (missing.length > 0) {
+    setFrames([
+      ...frames.filter(
+        (frame) => !missing.some((wanted) => wanted.id === frame.id),
+      ),
+      ...missing,
+    ]);
   }
 
   return frames.map((frame) => {

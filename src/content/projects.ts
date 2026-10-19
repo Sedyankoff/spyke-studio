@@ -98,7 +98,9 @@ export const projects: Project[] = [
     url: "https://www.bookapart.net",
     urlLabel: "bookapart.net",
     // Framed, the site asks for cookie consent as it would on any first visit.
-    embedUrl: "https://www.bookapart.net",
+    // `/bg` directly: the root only answers with a 307 to it, whatever the
+    // visitor's language — a round trip each frame would wait for.
+    embedUrl: "https://www.bookapart.net/bg",
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Leaflet", "Supabase"],
     screens: [
       {

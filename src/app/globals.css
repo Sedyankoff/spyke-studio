@@ -269,6 +269,10 @@
     animation: hero-fade 1400ms var(--ease-swift) 200ms both;
   }
 
+  .hero-visual {
+    animation: hero-fade 1100ms var(--ease-swift) 420ms both;
+  }
+
   .hero-lead {
     animation: hero-fade-up 800ms var(--ease-spatial) 620ms both;
   }
@@ -288,6 +292,21 @@
   overflow: hidden;
   padding-block: 0.12em 0.14em;
   margin-block: -0.12em -0.14em;
+}
+
+/*
+ * The sculpture's box. The image is sized from it (`cqh` / `cqw`), so it
+ * fills whatever room the layout leaves; where that is too little to read as
+ * the sculpture (short landscape phones), it is left out.
+ */
+.hero-visual {
+  container-type: size;
+}
+
+@container (max-height: 7.5rem) {
+  .hero-visual > img {
+    display: none;
+  }
 }
 
 /* ---------------------------------------------------------------------------

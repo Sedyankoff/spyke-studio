@@ -34,6 +34,12 @@ function subscribeLive(onChange: () => void) {
   return () => query.removeEventListener("change", onChange);
 }
 
+/**
+ * How long the pointer or focus has to rest on a way into a project before
+ * its live site starts loading — so sweeping across the icons loads nothing.
+ */
+const INTENT_DWELL = 120;
+
 /** The monitor never starts empty: the first project is open on arrival. */
 const initialOpen: OpenState = { id: projects[0].id, origin: "50% 50%" };
 
@@ -230,21 +236,29 @@ export function Work({ copy, embeddable }: WorkProps) {
   }
 
   /**
+   * The project previous / next moves on to, or `null` while it still steps
+   * through the open project's own views.
+   */
+  function leavingTo(delta: 1 | -1) {
+    if (active) {
+      const next = view + delta;
+      if (next >= 0 && next < viewCount(active)) return null;
+    }
+    const index = active ? projects.indexOf(active) : delta > 0 ? -1 : 0;
+    return projects[(index + delta + projects.length) % projects.length];
+  }
+
+  /**
    * Previous / next: through the open project's screens first, then on to the
    * neighbouring project — entered from its last screen when going back.
    */
   function step(delta: 1 | -1) {
-    if (active) {
-      const next = view + delta;
-      if (next >= 0 && next < viewCount(active)) {
-        setView(next);
-        return;
-      }
+    const target = leavingTo(delta);
+    if (!target) {
+      setView(view + delta);
+      return;
     }
 
-    const index = active ? projects.indexOf(active) : delta > 0 ? -1 : 0;
-    const target =
-      projects[(index + delta + projects.length) % projects.length];
     // Keep focus in the screen when stepping from the keyboard inside it.
     const focus = !!desktopRef.current?.contains(document.activeElement);
     openProject(
@@ -277,6 +291,34 @@ export function Work({ copy, embeddable }: WorkProps) {
       ? copy.liveView
       : screen && copy.projects[active.id].screens[screen.id]?.label
     : null;
+
+  /*
+   * The project the reader is about to open — their pointer or focus is on
+   * its entry in the index, its icon, or the arrow that leads to it. Its live
+   * site starts loading, hidden, while they reach for the click; once loaded
+   * it stays, like any site that has been on show.
+   *
+   * Kept below the functions it calls: the React Compiler turns them into
+   * constants, so they are not hoisted.
+   */
+  const [stepIntent, setStepIntent] = useState<1 | -1 | null>(null);
+  const intentId =
+    hoverId ?? (stepIntent ? leavingTo(stepIntent)?.id : undefined) ?? null;
+  const [warmId, setWarmId] = useState<ProjectId | null>(null);
+  useEffect(() => {
+    if (!intentId) return;
+    const timer = window.setTimeout(() => setWarmId(intentId), INTENT_DWELL);
+    return () => window.clearTimeout(timer);
+  }, [intentId]);
+  const warmProject =
+    nearView && warmId
+      ? projects.find((project) => project.id === warmId)
+      : undefined;
+  const warmLive = warmProject ? liveOf(warmProject) : null;
+  const warmFrame: LiveFrame | null =
+    warmProject && warmLive ? { id: warmProject.id, url: warmLive } : null;
+  const mobileWarmFrame =
+    warmFrame && !mobileFailed.includes(warmFrame.id) ? warmFrame : null;
 
   return (
     <Section
@@ -331,6 +373,7 @@ export function Work({ copy, embeddable }: WorkProps) {
                   focusOnOpen={focusWindow}
                   live={!!live}
                   frame={desktopFrame}
+                  warmFrame={warmFrame}
                   onLiveFail={liveFailed}
                   hoverId={hoverId}
                   desktopRef={desktopRef}
@@ -352,6 +395,7 @@ export function Work({ copy, embeddable }: WorkProps) {
                       : ""
                   }
                   frame={mobileFrame}
+                  warmFrame={mobileWarmFrame}
                   frameTitleOf={(id) =>
                     `${copy.projects[id].name} — ${copy.liveView}, ${copy.mobileView}`
                   }
@@ -370,13 +414,21 @@ export function Work({ copy, embeddable }: WorkProps) {
               data-rd="2"
               className="mt-5 flex items-center gap-2 sm:mt-6"
             >
-              <StepButton label={copy.previousImage} onClick={() => step(-1)}>
+              <StepButton
+                label={copy.previousImage}
+                onClick={() => step(-1)}
+                onIntent={(on) => setStepIntent(on ? -1 : null)}
+              >
                 <ArrowLeft
                   strokeWidth={1.5}
                   className="h-4 w-4 transition-transform duration-300 ease-[var(--ease-spatial)] group-hover:-translate-x-0.5"
                 />
               </StepButton>
-              <StepButton label={copy.nextImage} onClick={() => step(1)}>
+              <StepButton
+                label={copy.nextImage}
+                onClick={() => step(1)}
+                onIntent={(on) => setStepIntent(on ? 1 : null)}
+              >
                 <ArrowRight
                   strokeWidth={1.5}
                   className="h-4 w-4 transition-transform duration-300 ease-[var(--ease-spatial)] group-hover:translate-x-0.5"
@@ -409,16 +461,23 @@ export function Work({ copy, embeddable }: WorkProps) {
 function StepButton({
   label,
   onClick,
+  onIntent,
   children,
 }: {
   label: string;
   onClick: () => void;
+  /** The pointer or focus arrives on (`true`) or leaves the button. */
+  onIntent: (on: boolean) => void;
   children: React.ReactNode;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      onMouseEnter={() => onIntent(true)}
+      onMouseLeave={() => onIntent(false)}
+      onFocus={() => onIntent(true)}
+      onBlur={() => onIntent(false)}
       aria-label={label}
       className="group flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-invert text-paper/70 transition-colors duration-200 hover:border-paper hover:bg-paper hover:text-ink active:scale-95"
     >

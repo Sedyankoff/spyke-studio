@@ -33,6 +33,8 @@ interface WorkstationProps {
    * screen is near the viewport.
    */
   frame: LiveFrame | null;
+  /** A live site to load hidden, ahead of the reader opening it. */
+  warmFrame: LiveFrame | null;
   onLiveFail: (id: ProjectId) => void;
   hoverId: ProjectId | null;
   desktopRef: React.RefObject<HTMLDivElement | null>;
@@ -56,6 +58,7 @@ export function Workstation({
   focusOnOpen,
   live,
   frame,
+  warmFrame,
   onLiveFail,
   hoverId,
   desktopRef,
@@ -139,6 +142,7 @@ export function Workstation({
             */}
             <LiveFrames
               current={frame}
+              warm={warmFrame}
               viewport={DESKTOP_VIEWPORT}
               titleOf={(id) => `${work.projects[id].name} — ${work.liveView}`}
               posterOf={(id) =>

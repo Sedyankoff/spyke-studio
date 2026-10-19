@@ -42,7 +42,10 @@ export const en: Dictionary = {
   },
   hero: {
     statement: "Digital products built from scratch.",
-    statementLines: ["Digital products,", "built from scratch."],
+    statementLines: [
+      ["Digital", "products,"],
+      ["built from", "scratch."],
+    ],
     lead: "From the first idea to a working product — with attention to every detail.",
     primaryCta: "View Projects",
     secondaryCta: "Get in Touch",

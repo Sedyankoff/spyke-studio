@@ -33,8 +33,12 @@ export interface Dictionary {
   };
   hero: {
     statement: string;
-    /** `statement`, word for word, with the display line breaks chosen by hand. */
-    statementLines: string[];
+    /**
+     * `statement`, word for word, in its display lines, each split by hand
+     * into the two rows it takes beside the sculpture (lg up). Narrower, a
+     * line's rows run on as one line and wrap to the measure.
+     */
+    statementLines: [string, string][];
     lead: string;
     primaryCta: string;
     secondaryCta: string;
