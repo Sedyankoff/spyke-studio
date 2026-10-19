@@ -3,10 +3,9 @@ import { brandAssets } from "@/content/site";
 import { cn } from "@/lib/utils";
 
 /**
- * The Spyke Studio brand assets. Both files are the original logo artwork —
- * `logo-ink` / `logo-paper` are the same lockup with the background knocked
- * out for light and dark surfaces, `logo-mark` is the arrow cropped from it.
- * Never substitute type for the mark.
+ * The Spyke Studio brand assets. `logo-ink` / `logo-paper` are the original
+ * lockup with the background knocked out for light and dark surfaces; the
+ * mark is the app icon. Never substitute type for either.
  */
 
 interface SpykeLogoProps {
@@ -39,7 +38,7 @@ export function SpykeLogo({
   );
 }
 
-/** The arrow from the logo, used on its own as a compact brand marker. */
+/** The app icon — the S and arrow on a black disc — as a compact brand marker. */
 export function SpykeMark({
   className,
   sizes = "24px",
@@ -47,7 +46,7 @@ export function SpykeMark({
   className?: string;
   sizes?: string;
 }) {
-  const asset = brandAssets.mark;
+  const asset = brandAssets.icon;
 
   return (
     <Image
@@ -57,7 +56,7 @@ export function SpykeMark({
       width={asset.width}
       height={asset.height}
       sizes={sizes}
-      className={cn("h-full w-auto select-none", className)}
+      className={cn("h-full w-auto rounded-full select-none", className)}
     />
   );
 }

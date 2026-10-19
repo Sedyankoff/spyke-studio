@@ -13,11 +13,20 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: defaultLocale,
     start_url: `/${defaultLocale}`,
     display: "standalone",
+    // The page opens on the paper hero.
     background_color: "#f5f2ec",
     theme_color: "#f5f2ec",
     icons: [
-      { src: "/images/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { src: "/images/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      {
+        src: "/images/icons/spyke-studio-icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "/images/icons/spyke-studio-icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
     ],
   };
 }

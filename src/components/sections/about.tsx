@@ -1,130 +1,116 @@
 import Image from "next/image";
-import { Crosshair, GraduationCap, Layers, MapPin } from "lucide-react";
 import { Section } from "@/components/layout/section";
 import { Container } from "@/components/ui/container";
 import type { Dictionary } from "@/content/dictionary";
 import { portrait } from "@/content/site";
 
-/** Facts are authored in a fixed order; the icons follow it. */
-const factIcons = [MapPin, Crosshair, Layers, GraduationCap];
+/*
+ * The avatar crop. The photograph is landscape (1366 × 1152) with the face
+ * at about 47% across and the head filling the upper ~40%; a plain cover in
+ * a circle would leave the head small among shoulders and backdrop. So the
+ * picture is laid out at 1.37× the circle's height — a head-and-shoulders
+ * crop — and centred on (47%, 40%). It stays a crop of the original pixels,
+ * never an enlargement: `sizes` asks for the larger box.
+ */
+const ZOOM = 1.37;
+const ASPECT = portrait.width / portrait.height;
+const FOCUS = { x: 0.47, y: 0.4 };
+const crop = {
+  width: `${ZOOM * ASPECT * 100}%`,
+  height: `${ZOOM * 100}%`,
+  left: `${50 - FOCUS.x * ZOOM * ASPECT * 100}%`,
+  top: `${50 - FOCUS.y * ZOOM * 100}%`,
+} as const;
 
 /**
- * The one photographic section: the portrait is the whole background, set on
- * near-black so it reads as a studio, with a grade only where the copy sits.
+ * A short personal introduction on the hero's charcoal. It opens like every
+ * other section — a hairline and the section label — then sets a compact
+ * profile (a small round portrait and the name) beside the biography, in
+ * the same label | content rhythm as the Stack and Experience sections.
+ *
+ * The biography's first paragraph is the lead, in the primary off-white; the
+ * other two follow a step smaller and quieter. On phones the profile is
+ * centred above the text.
  */
 export function About({ copy }: { copy: Dictionary["about"] }) {
+  const [lead, ...rest] = copy.paragraphs;
+
   return (
     <Section
       id="about"
       labelledBy="about-title"
       tone="dark"
-      className="section-y about-section isolate overflow-hidden bg-void text-paper"
+      className="bg-[#191919] py-20 text-paper sm:py-24 lg:py-28"
     >
-      <div aria-hidden="true" className="absolute inset-0 -z-10">
-        <div
-          className="about-plate absolute"
-          style={{ aspectRatio: `${portrait.width} / ${portrait.height}` }}
-        >
-          <Image
-            src={portrait.src}
-            alt=""
-            fill
-            sizes="(min-width: 1024px) 60vw, 100vw"
-            className="about-photo object-contain"
-          />
-        </div>
-        <div className="about-grade absolute inset-0" />
-        <div className="grain absolute inset-0 opacity-[0.05]" />
-      </div>
-
       <Container>
         <div
+          aria-hidden="true"
           data-reveal="line"
-          className="h-px w-full origin-left bg-line-invert"
+          className="h-px w-full bg-line-invert"
         />
+        <p className="meta mt-5 flex items-center gap-3 text-paper/50">
+          <span aria-hidden="true" className="h-px w-6 bg-red" />
+          {copy.eyebrow}
+        </p>
 
-        <div className="mt-12 grid gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
-          {/* Identity ----------------------------------------------------- */}
-          <div className="lg:sticky lg:top-28 lg:self-start">
-            <p className="meta flex items-center gap-3 text-paper/60">
-              <span aria-hidden="true" className="h-px w-6 bg-red" />
-              {copy.eyebrow}
-            </p>
+        <div className="mt-12 grid gap-10 sm:mt-14 lg:mt-16 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-16 xl:gap-20">
+          {/* Profile ------------------------------------------------------- */}
+          <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+            {/*
+              A hairline ring with one short red arc in it, a narrow gap of
+              the section's own colour between ring and photograph.
+            */}
+            <div
+              data-reveal="pop"
+              className="rounded-full bg-[conic-gradient(from_200deg,var(--color-red)_0_13%,rgb(245_242_236/0.16)_13%_100%)] p-px"
+            >
+              <div className="rounded-full bg-[#191919] p-[5px]">
+                <div className="relative h-28 w-28 overflow-hidden rounded-full bg-[#242424] sm:h-32 sm:w-32 lg:h-36 lg:w-36">
+                  <div className="absolute" style={crop}>
+                    <Image
+                      src={portrait.src}
+                      alt={copy.portraitAlt}
+                      fill
+                      sizes="(min-width: 1024px) 234px, (min-width: 640px) 208px, 182px"
+                      quality={90}
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <h2
               id="about-title"
               data-reveal="up"
-              className="display-section about-copy mt-5 text-paper"
+              data-rd="1"
+              className="mt-6 text-[1.625rem] leading-tight font-semibold tracking-[-0.025em] text-paper sm:mt-7 sm:text-[1.875rem]"
             >
               {copy.name}
             </h2>
-
-            <p
-              data-reveal="up"
-              data-rd="1"
-              className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm"
-            >
-              <span className="font-medium text-paper">{copy.role}</span>
-              <span aria-hidden="true" className="h-3 w-px bg-line-invert" />
-              <span className="text-paper/65">{copy.location}</span>
-            </p>
           </div>
 
-          {/* Narrative ---------------------------------------------------- */}
-          <div>
-            <div className="max-w-2xl space-y-6">
-              {copy.paragraphs.map((paragraph, index) => (
+          {/* Biography ----------------------------------------------------- */}
+          <div className="mx-auto w-full max-w-[40rem] lg:mx-0 lg:pt-1">
+            <p
+              data-reveal="up"
+              data-rd="2"
+              className="font-prose text-[1.125rem] leading-[1.65] font-[450] tracking-[-0.011em] text-pretty text-paper sm:text-[1.1875rem]"
+            >
+              {lead}
+            </p>
+
+            <div className="mt-6 space-y-5 border-t border-line-invert-soft pt-6">
+              {rest.map((paragraph, index) => (
                 <p
-                  key={paragraph}
+                  key={`${index}-${paragraph.slice(0, 20)}`}
                   data-reveal="up"
-                  data-rd={String(index + 1)}
-                  className={
-                    index === 0
-                      ? "about-copy text-lg leading-relaxed font-medium text-paper sm:text-[1.3125rem]"
-                      : "about-copy body-lg text-paper/70"
-                  }
+                  data-rd={String(index + 3)}
+                  className="font-prose text-base leading-[1.72] tracking-[-0.006em] text-pretty text-paper/[0.64] sm:text-[1.0625rem]"
                 >
                   {paragraph}
                 </p>
               ))}
-            </div>
-
-            <div data-reveal="up" className="mt-14">
-              <div className="flex items-center gap-3.5">
-                <span className="meta text-paper/45">{copy.factsLabel}</span>
-                <span
-                  aria-hidden="true"
-                  className="h-px flex-1 bg-line-invert"
-                />
-              </div>
-
-              <dl className="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-card border border-line-invert bg-line-invert sm:grid-cols-2">
-                {copy.facts.map((fact, index) => {
-                  const Icon = factIcons[index % factIcons.length];
-
-                  return (
-                    <div
-                      key={fact.label}
-                      className="group relative bg-ink p-5 transition-colors duration-300 hover:bg-ink-raised"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-red transition-transform duration-500 ease-[var(--ease-spatial)] group-hover:scale-x-100"
-                      />
-                      <div className="flex items-start justify-between gap-4">
-                        <dt className="eyebrow text-paper/45">{fact.label}</dt>
-                        <Icon
-                          aria-hidden="true"
-                          className="h-4 w-4 shrink-0 text-paper/35 transition-colors duration-300 group-hover:text-red"
-                        />
-                      </div>
-                      <dd className="mt-2.5 text-[15px] font-medium text-paper">
-                        {fact.value}
-                      </dd>
-                    </div>
-                  );
-                })}
-              </dl>
             </div>
           </div>
         </div>

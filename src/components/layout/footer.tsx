@@ -1,4 +1,3 @@
-import { ArrowUp } from "lucide-react";
 import { SpykeLogo } from "@/components/brand/spyke-logo";
 import { Container } from "@/components/ui/container";
 import { SocialLinks } from "@/components/ui/social-links";
@@ -9,10 +8,9 @@ import type { Dictionary } from "@/content/dictionary";
 interface FooterProps {
   copy: Dictionary["footer"];
   nav: Dictionary["nav"];
-  common: Dictionary["common"];
 }
 
-export function Footer({ copy, nav, common }: FooterProps) {
+export function Footer({ copy, nav }: FooterProps) {
   return (
     <footer data-tone="dark" className="relative overflow-hidden bg-ink text-paper">
       <span
@@ -31,9 +29,11 @@ export function Footer({ copy, nav, common }: FooterProps) {
             >
               <SpykeLogo tone="paper" sizes="170px" />
             </a>
-            <p className="mt-6 max-w-xs text-sm leading-relaxed text-paper/55">
-              {copy.tagline}
-            </p>
+            {copy.tagline && (
+              <p className="mt-6 max-w-xs text-sm leading-relaxed text-paper/55">
+                {copy.tagline}
+              </p>
+            )}
           </div>
 
           <nav aria-label={nav.label}>
@@ -58,19 +58,7 @@ export function Footer({ copy, nav, common }: FooterProps) {
           <p>
             © {new Date().getFullYear()} {copy.owner}. {copy.rights}
           </p>
-          <p>{copy.builtBy}</p>
-          <a
-            href="#hero"
-            className="group inline-flex items-center gap-2 font-mono tracking-[0.18em] uppercase transition-colors hover:text-paper"
-          >
-            {common.backToTop}
-            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-line-invert transition-colors duration-200 group-hover:border-red group-hover:bg-red">
-              <ArrowUp
-                aria-hidden="true"
-                className="h-3 w-3 transition-transform duration-300 ease-[var(--ease-spatial)] group-hover:-translate-y-0.5"
-              />
-            </span>
-          </a>
+          {copy.builtBy && <p>{copy.builtBy}</p>}
         </div>
       </Container>
     </footer>

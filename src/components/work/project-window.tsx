@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { m } from "framer-motion";
-import { LivePreview } from "@/components/work/live-preview";
+import { MONITOR_SIZES, SCREEN_QUALITY } from "@/components/work/screen-sizes";
 import type { Dictionary } from "@/content/dictionary";
-import type { Project, ProjectCopy, ProjectImage } from "@/content/schema";
+import type { Project, ProjectCopy, ProjectScreen } from "@/content/schema";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -14,11 +14,13 @@ interface ProjectWindowProps {
   project: Project;
   copy: ProjectCopy;
   work: Dictionary["work"];
-  /** The project's desktop screenshots, in order. */
-  views: ProjectImage[];
-  /** The live site to show ahead of the screenshots, when it may be framed here. */
-  live: string | null;
-  onLiveFail: () => void;
+  /** The project's screens, in order; the window shows their desktop capture. */
+  screens: ProjectScreen[];
+  /**
+   * Whether the live site comes ahead of the screenshots. The frame itself
+   * belongs to the workstation, so it survives this window closing.
+   */
+  live: boolean;
   origin: string;
   view: number;
   /** Take focus on mount — only when the reader opened it, never on page load. */
@@ -29,16 +31,16 @@ interface ProjectWindowProps {
 
 /**
  * An application window on the Spyke desktop. It grows out of its icon to
- * fill the screen and shrinks back into it; inside is the real product — the
- * live site when it may be framed, then the desktop screenshots.
+ * fill the screen and shrinks back into it; inside is the real product, edge
+ * to edge — the desktop screenshots, under the live site when it may be
+ * framed.
  */
 export function ProjectWindow({
   project,
   copy,
   work,
-  views,
+  screens,
   live,
-  onLiveFail,
   origin,
   view,
   focusOnOpen,
@@ -50,13 +52,11 @@ export function ProjectWindow({
 
   // The live site, when there is one, is the first view; screenshots follow.
   const offset = live ? 1 : 0;
-  const count = views.length + offset;
-  const liveActive = !!live && view === 0;
-  const current = liveActive ? null : views[view - offset];
-
-  // Once opened, the frame stays mounted so stepping back doesn't reload it.
-  const [liveMounted, setLiveMounted] = useState(false);
-  if (liveActive && !liveMounted) setLiveMounted(true);
+  const count = screens.length + offset;
+  const liveActive = live && view === 0;
+  const current = liveActive ? null : screens[view - offset];
+  // Under the live site, the first screen holds the window until it loads.
+  const shown = Math.max(view - offset, 0);
 
   useEffect(() => {
     if (focusOnOpen) windowRef.current?.focus({ preventScroll: true });
@@ -91,12 +91,11 @@ export function ProjectWindow({
         }}
         className="flex h-full flex-col overflow-hidden bg-[#0f0e0c] outline-none"
       >
-        {/* No window chrome: the product fills the screen edge to edge. */}
         <p id={titleId} className="sr-only">
           {copy.name}
           {liveActive
             ? ` — ${work.liveView}`
-            : current && ` — ${copy.images[current.id]?.label ?? ""}`}
+            : current && ` — ${copy.screens[current.id]?.label ?? ""}`}
         </p>
         {count > 1 && (
           <p aria-live="polite" className="sr-only">
@@ -104,7 +103,6 @@ export function ProjectWindow({
           </p>
         )}
 
-        {/* Content ----------------------------------------------------- */}
         <div
           className="relative min-h-0 flex-1 touch-pan-y overflow-hidden bg-[#0c0b0a]"
           onPointerDown={(event) => {
@@ -118,44 +116,29 @@ export function ProjectWindow({
             if (Math.abs(delta) > 40) onStep(delta < 0 ? 1 : -1);
           }}
         >
-          {live && liveMounted && (
-            <div
-              aria-hidden={liveActive ? undefined : "true"}
-              className={cn(
-                "absolute inset-0 transition-[opacity,transform] duration-500 ease-[var(--ease-spatial)]",
-                liveActive ? "opacity-100" : "pointer-events-none opacity-0",
-              )}
-              style={{
-                transform: `translate3d(${liveActive ? 0 : -3}%, 0, 0)`,
-              }}
-            >
-              <LivePreview
-                url={live}
-                title={`${copy.name} — ${work.liveView}`}
-                poster={views[0]}
-                onFail={onLiveFail}
-              />
-            </div>
-          )}
-          {views.map((image, index) => {
-            const i = index + offset;
-            const shift = i === view ? 0 : i < view ? -1 : 1;
+          {screens.map((screen, index) => {
+            const shift = index === shown ? 0 : index < shown ? -1 : 1;
 
             return (
               <div
-                key={image.id}
-                aria-hidden={shift === 0 ? undefined : "true"}
+                key={screen.id}
+                aria-hidden={shift === 0 && !liveActive ? undefined : "true"}
                 className={cn(
                   "absolute inset-0 transition-[opacity,transform] duration-500 ease-[var(--ease-spatial)]",
                   shift === 0 ? "opacity-100" : "pointer-events-none opacity-0",
                 )}
-                style={{ transform: `translate3d(${shift * 3}%, 0, 0)` }}
+                // At rest the screen has no transform at all: a composited
+                // layer can land between device pixels and resample the image.
+                style={{
+                  transform: shift === 0 ? "none" : `translateX(${shift * 3}%)`,
+                }}
               >
                 <Image
-                  src={image.src}
-                  alt={copy.images[image.id]?.alt ?? ""}
+                  src={screen.desktop.src}
+                  alt={copy.screens[screen.id]?.alt ?? ""}
                   fill
-                  sizes="(min-width: 1280px) 1040px, (min-width: 640px) 84vw, 100vw"
+                  sizes={MONITOR_SIZES}
+                  quality={SCREEN_QUALITY}
                   className="object-cover object-top"
                 />
               </div>

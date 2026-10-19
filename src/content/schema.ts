@@ -15,12 +15,20 @@ export interface SocialLink {
 
 export type ProjectId = "spyke-commerce" | "gnc-bulgaria" | "bookapart";
 
-export interface ProjectImage {
-  id: string;
+export interface ImageAsset {
   src: string;
   width: number;
   height: number;
-  kind: "desktop" | "mobile";
+}
+
+/**
+ * One page of a project, captured at desktop and at mobile width. The two
+ * always travel together: the monitor shows `desktop`, the phone `mobile`.
+ */
+export interface ProjectScreen {
+  id: string;
+  desktop: ImageAsset;
+  mobile: ImageAsset;
 }
 
 /** `from` / `to` are `YYYY` or `YYYY-MM`. */
@@ -34,29 +42,33 @@ export interface Project {
   id: ProjectId;
   /** Monogram drawn on the project's desktop icon. */
   glyph: string;
-  period?: Period;
+  /**
+   * The project's own logo, light artwork on a transparent background, shown
+   * beside its name on dark surfaces. Cropped to the artwork, so every logo
+   * can be sized by height alone.
+   */
+  logo: ImageAsset;
   /** The running product, opened in a new tab. */
   url?: string;
   urlLabel?: string;
   /**
-   * Address for the live, interactive preview inside the workstation. Only
-   * set it for a site that may be framed. The build still checks the site's
-   * response headers (`X-Frame-Options`, CSP `frame-ancestors`) and quietly
-   * falls back to the screenshots if framing is refused.
+   * Address for the live, interactive previews: the monitor frames it at a
+   * desktop width and the phone at a mobile one, so the site lays itself out
+   * for each. Only set it for a site that may be framed. The build still
+   * checks the site's response headers (`X-Frame-Options`, CSP
+   * `frame-ancestors`) and quietly falls back to the screenshots if framing
+   * is refused.
    */
   embedUrl?: string;
   tech: string[];
-  images: ProjectImage[];
+  screens: ProjectScreen[];
 }
 
 export interface ProjectCopy {
   name: string;
-  category: string;
-  status: string;
-  summary: string;
+  /** One or two plain sentences: what the product is and who it is for. */
   description: string;
-  roles: string[];
-  images: Record<string, { label: string; alt: string }>;
+  screens: Record<string, { label: string; alt: string }>;
 }
 
 export type StackGroupId =
@@ -84,7 +96,7 @@ export interface StackGroup {
 }
 
 export type CapabilityId =
-  "rest" | "multitenancy" | "integrations" | "realtime" | "cicd";
+  "rest" | "integrations" | "cicd";
 
 export interface ExperienceEntry {
   id: string;

@@ -66,8 +66,6 @@ export const stackGroups: StackGroup[] = [
 
 export const capabilityIds: CapabilityId[] = [
   "rest",
-  "multitenancy",
   "integrations",
-  "realtime",
   "cicd",
 ];

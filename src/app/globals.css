@@ -34,6 +34,9 @@
 @theme inline {
   --font-display: var(--font-oswald), "Arial Narrow", ui-sans-serif, sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* Long-form reading text; Inter stands in until Geist has loaded. */
+  --font-prose: var(--font-geist), var(--font-inter), ui-sans-serif, system-ui,
+    sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
 }
 
@@ -89,8 +92,7 @@
 
 @layer components {
   .display-hero,
-  .display-section,
-  .display-card {
+  .display-section {
     font-family: var(--font-display);
     font-weight: 600;
     text-transform: uppercase;
@@ -110,11 +112,6 @@
   .display-section {
     font-size: clamp(2.125rem, 4.4vw, 3.75rem);
     line-height: 0.98;
-  }
-
-  .display-card {
-    font-size: clamp(1.375rem, 2.3vw, 2rem);
-    line-height: 1.02;
   }
 
   .eyebrow {
@@ -162,13 +159,6 @@
       padding-block: 8rem;
     }
   }
-
-  .rule {
-    height: 1px;
-    width: 100%;
-    border: 0;
-    background: var(--color-line);
-  }
 }
 
 .skip-link {
@@ -207,215 +197,116 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Hero
-   The plate is the photograph: full height, anchored right, at least 80% of
-   the width and wider only when the image's own proportions call for it. On
-   landscape screens its leading edge falls away into the black of the
-   section, and a layered grade deepens the reading side. Black only —
-   nothing is lightened, nothing is blurred.
---------------------------------------------------------------------------- */
-
-/* The frame is a size container so the plate can be sized from its height. */
-.hero-frame {
-  container: hero / size;
-}
-
-.hero-photo {
-  filter: brightness(0.92) contrast(1.04) saturate(0.7);
-}
-
-.hero-plate {
-  width: 100%;
-  width: min(100cqw, max(80cqw, 100cqh * var(--hero-ratio)));
-}
-
-/* Landscape frames: a long, soft falloff from the plate into black. */
-@container hero (min-aspect-ratio: 1/1) {
-  .hero-plate {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      rgb(0 0 0 / 0.2) 8%,
-      rgb(0 0 0 / 0.55) 18%,
-      rgb(0 0 0 / 0.85) 28%,
-      #000 38%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      rgb(0 0 0 / 0.2) 8%,
-      rgb(0 0 0 / 0.55) 18%,
-      rgb(0 0 0 / 0.85) 28%,
-      #000 38%
-    );
-  }
-}
-
-.hero-grade {
-  background:
-    /* Reading side: deep at the edge, easing out by the centre. */
-    linear-gradient(
-      90deg,
-      rgb(11 10 9 / 0.78) 0%,
-      rgb(11 10 9 / 0.62) 18%,
-      rgb(11 10 9 / 0.4) 34%,
-      rgb(11 10 9 / 0.16) 50%,
-      rgb(11 10 9 / 0.04) 62%,
-      rgb(11 10 9 / 0) 72%
-    ),
-    /* A soft pool behind the headline for bright passages of the image. */
-    radial-gradient(
-      50% 55% at 20% 52%,
-      rgb(11 10 9 / 0.22) 0%,
-      rgb(11 10 9 / 0) 100%
-    ),
-    /* A light base so highlights never blow out under white type. */
-    linear-gradient(rgb(11 10 9 / 0.1), rgb(11 10 9 / 0.1));
-}
-
-/* Portrait screens: the copy spans the width, so the grade runs top to bottom. */
-@media (max-width: 767px) {
-  .hero-grade {
-    background:
-      linear-gradient(
-        180deg,
-        rgb(11 10 9 / 0.55) 0%,
-        rgb(11 10 9 / 0.45) 40%,
-        rgb(11 10 9 / 0.26) 70%,
-        rgb(11 10 9 / 0.14) 100%
-      ),
-      linear-gradient(
-        90deg,
-        rgb(11 10 9 / 0.2) 0%,
-        rgb(11 10 9 / 0) 80%
-      );
-  }
-}
-
-/* Type over photography: a wide, faint shadow that only shows where the
-   image behind a letter is bright. */
-.hero-copy {
-  text-shadow: 0 2px 28px rgb(11 10 9 / 0.35);
-}
-
-/* A faint dark falloff at the top edge that seats the header controls. */
-.hero-top {
-  background: linear-gradient(
-    to bottom,
-    rgb(11 10 9 / 0.45) 0%,
-    rgb(11 10 9 / 0.18) 50%,
-    rgb(11 10 9 / 0) 100%
-  );
-}
-
-/* ---------------------------------------------------------------------------
-   About
-   The portrait is a cut-out on a transparent ground: the section's black is
-   the studio around it. The figure is graded like the hero photograph and
-   placed clear of the copy. Black only — nothing glows or blurs.
---------------------------------------------------------------------------- */
-
-/* Phones and tablets: one column, so the portrait leads the section and the
-   copy begins where the figure has fallen away into black. */
-.about-section {
-  --about-plate: min(100%, 36rem);
-  /* Clears the header, then the figure down to where it has faded out. */
-  padding-top: calc(4rem + min(71vw, 25.5rem));
-}
-
-.about-plate {
-  top: 4rem;
-  left: 50%;
-  width: var(--about-plate);
-  translate: -50% 0;
-  -webkit-mask-image: linear-gradient(to bottom, #000 44%, transparent 68%);
-  mask-image: linear-gradient(to bottom, #000 44%, transparent 68%);
-}
-
-.about-photo {
-  filter: brightness(0.74) contrast(1.06) saturate(0.7);
-}
-
-/* Desktop: the figure stands in the identity column, beneath the name, and
-   falls off into black at the shoulders and towards the foot. Measured from
-   the container (82rem, 3rem gutters) so it stays under the same column. */
-@media (min-width: 1024px) {
-  .about-section {
-    padding-top: 8rem;
-  }
-
-  .about-plate {
-    --about-content: calc(min(100%, 82rem) - 6rem);
-    /* Just beneath the name block: padding, rule and eyebrow come to 20rem,
-       then the name (the .display-section size) — two lines until 75rem,
-       where it may still wrap, one line beyond. */
-    top: calc(20rem + 1.96 * clamp(2.125rem, 4.4vw, 3.75rem));
-    translate: none;
-    left: calc(max(0px, (100% - 82rem) / 2) + 3rem);
-    width: calc(var(--about-content) * 0.6);
-    -webkit-mask-image:
-      linear-gradient(to bottom, #000 52%, transparent 92%),
-      linear-gradient(to right, transparent 0%, #000 14%);
-    -webkit-mask-composite: source-in;
-    mask-image:
-      linear-gradient(to bottom, #000 52%, transparent 92%),
-      linear-gradient(to right, transparent 0%, #000 14%);
-    mask-composite: intersect;
-  }
-}
-
-@media (min-width: 75rem) {
-  .about-plate {
-    top: calc(20rem + 0.98 * clamp(2.125rem, 4.4vw, 3.75rem));
-  }
-}
-
-/* The foot of the section settles into black, so the figure never meets the
-   next section as a hard edge. */
-.about-grade {
-  background: linear-gradient(
-    to top,
-    rgb(11 10 9) 0%,
-    rgb(11 10 9 / 0.85) 8%,
-    rgb(11 10 9 / 0.4) 18%,
-    rgb(11 10 9 / 0) 30%
-  );
-}
-
-.about-copy {
-  text-shadow: 0 2px 24px rgb(11 10 9 / 0.6);
-}
-
-/* ---------------------------------------------------------------------------
    Entrance choreography (first paint, hero only)
+   Pure CSS on server-rendered markup: it starts with the first paint, never
+   waits for hydration, and the `both` fill keeps every element in its start
+   state through its delay, so nothing flashes in its final position first.
+   Only transform and opacity move. With reduced motion none of it applies
+   and the hero is simply there.
 --------------------------------------------------------------------------- */
 
-@keyframes spyke-rise {
+@keyframes hero-accent {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Each headline line rises out of its own mask. */
+@keyframes hero-line {
+  from {
+    transform: translate3d(0, 108%, 0);
+  }
+}
+
+@keyframes hero-fade-up {
   from {
     opacity: 0;
-    transform: translate3d(0, 20px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+    transform: translate3d(0, 14px, 0);
   }
 }
 
-@keyframes spyke-fade {
+@keyframes hero-fade {
   from {
     opacity: 0;
   }
-  to {
-    opacity: 1;
+}
+
+/* The dark surface (with its red edge) settles up into place... */
+@keyframes hero-surface {
+  from {
+    transform: translate3d(0, 7%, 0);
   }
 }
 
-.animate-rise {
-  animation: spyke-rise 720ms var(--ease-spatial) both;
+/* ...and the red edge draws along its own slope: `--edge-rise` over the full
+   width (17% of the hero from sm up, a fixed rise on phones). */
+@keyframes hero-edge {
+  from {
+    transform: translate3d(-100%, var(--edge-rise, 17%), 0);
+  }
 }
 
-.animate-fade {
-  animation: spyke-fade 900ms var(--ease-swift) both;
+@media (prefers-reduced-motion: no-preference) {
+  .hero-accent {
+    transform-origin: left center;
+    animation: hero-accent 700ms var(--ease-spatial) 80ms both;
+  }
+
+  .hero-line {
+    animation: hero-line 1000ms var(--ease-spatial) both;
+    animation-delay: calc(180ms + var(--line, 0) * 110ms);
+  }
+
+  .hero-surface {
+    animation: hero-surface 1200ms var(--ease-spatial) 120ms both;
+  }
+
+  .hero-edge {
+    animation: hero-edge 1300ms var(--ease-spatial) 320ms both;
+  }
+
+  .hero-glow {
+    animation: hero-fade 1400ms var(--ease-swift) 200ms both;
+  }
+
+  .hero-visual {
+    animation: hero-fade 1100ms var(--ease-swift) 420ms both;
+  }
+
+  .hero-lead {
+    animation: hero-fade-up 800ms var(--ease-spatial) 620ms both;
+  }
+
+  .hero-cta {
+    animation: hero-fade-up 800ms var(--ease-spatial) 740ms both;
+  }
+}
+
+/*
+ * A line's mask. The padding (taken back by the negative margin, so the
+ * layout is unchanged) leaves room for Cyrillic breves and descenders and the
+ * comma, which reach past the tight line box.
+ */
+.hero-mask {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.12em 0.14em;
+  margin-block: -0.12em -0.14em;
+}
+
+/*
+ * The sculpture's box. The image is sized from it (`cqh` / `cqw`), so it
+ * fills whatever room the layout leaves; where that is too little to read as
+ * the sculpture (short landscape phones), it is left out.
+ */
+.hero-visual {
+  container-type: size;
+}
+
+@container (max-height: 7.5rem) {
+  .hero-visual > img {
+    display: none;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -464,6 +355,12 @@
 [data-reveal="scale"].is-out {
   opacity: 0;
   transform: scale(1.04);
+}
+
+/* Grows into place: for small, self-contained things like the portrait. */
+[data-reveal="pop"].is-out {
+  opacity: 0;
+  transform: scale(0.9);
 }
 
 [data-rd="1"] {

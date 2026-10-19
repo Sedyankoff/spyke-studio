@@ -1,55 +1,51 @@
-import type { SocialLink } from "@/content/schema";
-
-export interface ImageAsset {
-  src: string;
-  width: number;
-  height: number;
-}
+import type { ImageAsset, SocialLink } from "@/content/schema";
 
 export const siteConfig = {
   name: "Spyke Studio",
-  url: "https://spyke.studio",
+  /** Production origin. Canonical URLs, the sitemap and social cards derive from it. */
+  url: "https://spykedev.com",
   email: "stoil0878@gmail.com",
   /** Display form and dialable form of the same number. */
   phone: { display: "+359 878 245 747", href: "tel:+359878245747" },
-  timeZone: "Europe/Sofia",
   person: {
     givenName: "Stoil",
     familyName: "Sedyankov",
   },
-  heroImage: {
-    src: "/images/hero.webp",
-    width: 1080,
-    height: 1440,
-    /**
-     * `object-position` for the full-bleed crop: which part of the photograph
-     * stays in frame. Tuned for this image (horizon, landscape and figure in
-     * the lower half); adjust it when the production photograph lands.
-     */
-    focus: "48% 76%",
-  },
 } as const;
 
 /**
- * Brand artwork. `logo.png` is the original supplied file (white lockup on a
- * solid black plate); the three files below are that same artwork with the
- * plate removed so the mark can sit on either surface.
+ * Brand artwork. `logo.png` is the original supplied lockup (white on a solid
+ * black plate); `logo-ink` / `logo-paper` are that artwork with the plate
+ * removed, for paper and ink surfaces. `icon` is the Spyke Studio app icon —
+ * the S and arrow on a black disc — used as the compact mark and, resized, for
+ * the favicon, Apple touch icon and manifest icons.
  */
 export const brandAssets = {
   logoInk: { src: "/images/logo-ink.png", width: 1485, height: 509 },
   logoPaper: { src: "/images/logo-paper.png", width: 1485, height: 509 },
-  mark: { src: "/images/logo-mark.png", width: 200, height: 278 },
+  icon: {
+    src: "/images/icons/spyke-studio-icon.png",
+    width: 1254,
+    height: 1254,
+  },
 } satisfies Record<string, ImageAsset>;
 
 /**
- * Background of the About section: a cut-out portrait on a transparent
- * ground, so the section's own black shows through as the studio around it.
- * To change it, drop the new file into `public/images` and update these.
+ * The hero sculpture: the S and arrow as a black and red object, on a
+ * transparent ground. The artwork leaves clear margins in the canvas, 16% of
+ * its width on the left and 14.6% on the right; the hero offsets by them.
  */
+export const heroSculpture = {
+  src: "/images/hero-3d-model.png",
+  width: 1338,
+  height: 1175,
+} satisfies ImageAsset;
+
+/** The About portrait: a studio photograph on a dark grey backdrop. */
 export const portrait = {
-  src: "/images/StoilSedyankov.png",
-  width: 2028,
-  height: 2120,
+  src: "/images/stoil-sedyankov-portrait.png",
+  width: 1366,
+  height: 1152,
 } satisfies ImageAsset;
 
 /**
@@ -57,8 +53,16 @@ export const portrait = {
  * not rendered anywhere until a real address is filled in here.
  */
 export const socialLinks: SocialLink[] = [
-  { platform: "linkedin", label: "LinkedIn", href: null },
-  { platform: "github", label: "GitHub", href: null },
+  {
+    platform: "linkedin",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/stoil-sedyankov-720657304",
+  },
+  {
+    platform: "github",
+    label: "GitHub",
+    href: "https://github.com/Sedyankoff",
+  },
   { platform: "portfolio", label: "Portfolio", href: null },
   {
     platform: "email",

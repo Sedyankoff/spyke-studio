@@ -11,15 +11,16 @@ export interface Dictionary {
     title: string;
     description: string;
     keywords: string[];
-    ogAlt: string;
   };
   common: {
     present: string;
     skipToContent: string;
     backToTop: string;
     close: string;
-    languageLabel: string;
     switchLanguage: string;
+    /** The 404 page. */
+    notFound: string;
+    home: string;
     /** Short month names, January first. */
     months: string[];
   };
@@ -31,12 +32,13 @@ export interface Dictionary {
     items: Record<NavSectionId, { label: string; hint: string }>;
   };
   hero: {
-    /** Name and title, above the headline. */
-    eyebrow: string;
-    location: string;
     statement: string;
-    /** `statement`, word for word, with the display line breaks chosen by hand. */
-    statementLines: string[];
+    /**
+     * `statement`, word for word, in its display lines, each split by hand
+     * into the two rows it takes beside the sculpture (lg up). Narrower, a
+     * line's rows run on as one line and wrap to the measure.
+     */
+    statementLines: [string, string][];
     lead: string;
     primaryCta: string;
     secondaryCta: string;
@@ -45,10 +47,7 @@ export interface Dictionary {
     eyebrow: string;
     name: string;
     role: string;
-    location: string;
     paragraphs: string[];
-    factsLabel: string;
-    facts: { label: string; value: string }[];
     portraitAlt: string;
   };
   stack: {
@@ -68,15 +67,16 @@ export interface Dictionary {
     open: string;
     workstationLabel: string;
     liveView: string;
-    openLive: string;
+    liveLoading: string;
+    /** Link that opens the running site in a new tab. */
+    visitSite: string;
+    /** Appended to the link's accessible name. */
+    newTab: string;
+    /** Appended to a screen's alt text for its phone capture. */
+    mobileView: string;
     previousImage: string;
     nextImage: string;
-    categoryLabel: string;
-    roleLabel: string;
-    statusLabel: string;
     techLabel: string;
-    overviewLabel: string;
-    liveLabel: string;
     projects: Record<ProjectId, ProjectCopy>;
   };
   experience: {
@@ -92,7 +92,7 @@ export interface Dictionary {
         summary: string;
         /** The primary technologies of the role. */
         tags: string[];
-        /** Further areas of experience, listed quietly after the tags. */
+        /** Areas of work, listed quietly after the tags. */
         areas?: string[];
       }
     >;

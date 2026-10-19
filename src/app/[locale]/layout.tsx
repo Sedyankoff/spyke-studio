@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
-import { Inter, JetBrains_Mono, Oswald } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { CommandPanel } from "@/components/command/command-panel";
 import { CommandProvider } from "@/components/command/command-context";
 import { PageShell } from "@/components/command/page-shell";
@@ -17,25 +17,8 @@ import {
   type Locale,
 } from "@/i18n/config";
 import { buildStructuredData } from "@/lib/structured-data";
+import { fontVariables } from "../fonts";
 import "../globals.css";
-
-const oswald = Oswald({
-  variable: "--font-oswald",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  display: "swap",
-});
 
 export const dynamicParams = false;
 
@@ -53,7 +36,12 @@ export async function generateMetadata(
 
   return {
     metadataBase: new URL(siteConfig.url),
-    title: dictionary.meta.title,
+    // The tab reads just the studio's name; the social cards below keep the
+    // fuller, per-language title.
+    title: {
+      default: siteConfig.name,
+      template: `%s — ${siteConfig.name}`,
+    },
     description: dictionary.meta.description,
     applicationName: siteConfig.name,
     authors: [
@@ -100,6 +88,7 @@ export async function generateMetadata(
   };
 }
 
+// The page opens on the hero's paper; the browser chrome matches it.
 export const viewport: Viewport = {
   themeColor: "#f5f2ec",
   colorScheme: "light",
@@ -114,7 +103,7 @@ export default async function LocaleLayout(props: LayoutProps<"/[locale]">) {
   return (
     <html
       lang={htmlLang[locale as Locale]}
-      className={`${oswald.variable} ${inter.variable} ${jetbrains.variable}`}
+      className={fontVariables}
     >
       <body className="min-h-svh bg-paper">
         <a href="#content" className="skip-link">
@@ -142,6 +131,8 @@ export default async function LocaleLayout(props: LayoutProps<"/[locale]">) {
         </MotionProvider>
 
         <RevealObserver />
+        {/* Vercel Web Analytics: page views only, no cookies; inert in dev. */}
+        <Analytics />
 
         <script
           type="application/ld+json"

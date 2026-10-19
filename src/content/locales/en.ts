@@ -17,15 +17,15 @@ export const en: Dictionary = {
       "Bulgaria",
       "Spyke Studio",
     ],
-    ogAlt: "Stoil Sedyankov — Software Engineer",
   },
   common: {
     present: "present",
     skipToContent: "Skip to content",
     backToTop: "Back to top",
     close: "Close",
-    languageLabel: "Language",
     switchLanguage: "Превключи на български",
+    notFound: "This page doesn't exist.",
+    home: "Back to home",
     months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
   },
   nav: {
@@ -41,11 +41,12 @@ export const en: Dictionary = {
     },
   },
   hero: {
-    eyebrow: "Stoil Sedyankov — Software Engineer",
-    location: "Plovdiv, Bulgaria",
-    statement: "Digital products, designed and built from scratch.",
-    statementLines: ["Digital products,", "designed", "and built", "from scratch."],
-    lead: "Platforms for e-commerce, web applications and real-time systems.",
+    statement: "Digital products built from scratch.",
+    statementLines: [
+      ["Digital", "products,"],
+      ["built from", "scratch."],
+    ],
+    lead: "From the first idea to a working product — with attention to every detail.",
     primaryCta: "View Projects",
     secondaryCta: "Get in Touch",
   },
@@ -53,24 +54,17 @@ export const en: Dictionary = {
     eyebrow: "About",
     name: "Stoil Sedyankov",
     role: "Software Engineer",
-    location: "Plovdiv, Bulgaria",
     paragraphs: [
-      "Software Engineer with professional experience building and maintaining web applications with C#/.NET and React/TypeScript. My main focus is backend and frontend development, REST APIs, databases, integrations, and production software. I work with modern development technologies, cloud infrastructure, and CI/CD. I am currently in my final year of a Bachelor's degree in Software Engineering at Plovdiv University.",
-      "I started programming on my own at a young age. My first formal experience was a C#/.NET internship at SKAI VIU in 2022. I began studying Software Engineering at Plovdiv University in 2023, and since May 2024 I have worked as a Programmer – Software Applications at Orak Engineering.",
-    ],
-    factsLabel: "Profile",
-    facts: [
-      { label: "Location", value: "Plovdiv, Bulgaria" },
-      { label: "Focus", value: "Backend and frontend development" },
-      { label: "Primary stack", value: "C#/.NET · React/TypeScript" },
-      { label: "Education", value: "Software Engineering, final year" },
+      "I’ve been programming for over four years. I build web applications across the backend and the frontend, from databases and integrations to the infrastructure they run on.",
+      "Outside my main job, I work on my own projects and build solutions for clients. I like starting from an idea and carrying it all the way to a product that works, and my own projects are where I try out new technologies and approaches.",
+      "Spyke Studio grew out of Spyke Commerce, the e-commerce platform I built on my own for GNC Bulgaria. That project gave me the confidence to start offering my services independently.",
     ],
     portraitAlt: "Portrait of Stoil Sedyankov",
   },
   stack: {
     eyebrow: "Stack",
     title: "Technologies",
-    lead: "My primary stack is C#/.NET and React/TypeScript. Around it: databases, infrastructure, CI/CD and real-time systems.",
+    lead: "",
     groups: {
       languages: "Languages",
       frontend: "Frontend",
@@ -81,98 +75,86 @@ export const en: Dictionary = {
       realtime: "Real-time & distributed",
     },
     primaryLabel: "Primary",
-    capabilitiesTitle: "Engineering",
+    capabilitiesTitle: "Other areas",
     capabilities: {
       rest: "REST APIs",
-      multitenancy: "Multi-tenant architecture",
       integrations: "External API integrations",
-      realtime: "Real-time systems",
       cicd: "CI/CD",
     },
   },
   work: {
     eyebrow: "Work",
     title: "Selected projects",
-    lead: "A commerce platform, a storefront built on it and a product site.",
-    open: "Open project",
+    lead: "",
+    open: "Show project",
     workstationLabel: "Spyke Studio workstation",
     liveView: "Live",
-    openLive: "Open project",
+    liveLoading: "Loading live site…",
+    visitSite: "Visit project",
+    newTab: "opens in a new tab",
+    mobileView: "mobile view",
     previousImage: "Previous screen",
     nextImage: "Next screen",
-    categoryLabel: "Category",
-    roleLabel: "Role",
-    statusLabel: "Status",
     techLabel: "Technologies",
-    overviewLabel: "Overview",
-    liveLabel: "Live site",
     projects: {
       "spyke-commerce": {
         name: "Spyke Commerce",
-        category: "Commerce platform",
-        status: "In production",
-        roles: ["Architecture", "Development", "Infrastructure"],
-        summary: "Multi-tenant commerce platform and admin.",
         description:
-          "The platform every Spyke Studio storefront runs on. One admin covers catalog, categories, promotions and promo codes, content and blog pages, policy pages, orders, reviews and users, alongside a real-time dashboard for sessions, revenue, conversion rate, average order value and traffic sources. Multi-tenant, role-based and bilingual.",
-        images: {
-          dashboard: {
-            label: "Dashboard",
-            alt: "Spyke Commerce analytics dashboard showing users, sessions, conversion rate, revenue and a traffic versus revenue chart",
-          },
-          signin: {
-            label: "Sign in",
-            alt: "Spyke Commerce workspace sign-in screen",
-          },
+          "The platform behind Spyke Studio's online stores. Store owners manage products, orders, promotions and content from one admin panel, and follow sales and traffic on a live dashboard.",
+        screens: {
           products: {
             label: "Products",
-            alt: "Spyke Commerce product management on mobile, listing 161 products with search and bulk edit",
+            alt: "Spyke Commerce admin panel",
+          },
+          "product-edit": {
+            label: "Edit product",
+            alt: "Spyke Commerce product editor",
+          },
+          login: {
+            label: "Sign in",
+            alt: "Spyke Commerce workspace sign-in screen",
           },
         },
       },
       "gnc-bulgaria": {
         name: "GNC Bulgaria",
-        category: "Storefront",
-        status: "Shipped",
-        roles: ["Development", "Integrations", "Deployment"],
-        summary: "The official GNC storefront for the Bulgarian market.",
         description:
-          "A full storefront built on Spyke Commerce: a 161-product catalog with search and category navigation, campaigns, promotions and a news section. Every price is shown in both EUR and BGN at the official rate for Bulgaria's euro transition, and the site runs in Bulgarian and English.",
-        images: {
-          storefront: {
-            label: "Storefront",
-            alt: "GNC Bulgaria homepage with dual-currency pricing, category navigation and a Total Lean campaign banner",
+          "The official GNC online store for Bulgaria, built on Spyke Commerce.",
+        screens: {
+          home: {
+            label: "Home",
+            alt: "GNC Bulgaria homepage",
           },
-          news: {
-            label: "News",
-            alt: "GNC Bulgaria news section on mobile",
+          category: {
+            label: "Category",
+            alt: "GNC Bulgaria category page",
+          },
+          product: {
+            label: "Product",
+            alt: "GNC Bulgaria product page",
           },
         },
       },
       bookapart: {
-        name: "BookApart",
-        category: "Product site",
-        status: "Shipped",
-        roles: ["Design", "Development", "Content"],
-        summary: "Curated stays in the Rhodope mountains.",
+        name: "Bookapart",
         description:
-          "Apartments, studios and guest houses across four Rhodope destinations. Stays filter instantly on the client, guests contact owners directly, and an interactive map plots twenty local landmarks. Content is authored in MDX and the site is bilingual.",
-        images: {
+          "A site for finding apartments, studios and guest houses in the Rhodope mountains. Users contact hosts directly and explore nearby landmarks.",
+        screens: {
           home: {
             label: "Home",
-            alt: "BookApart homepage over an aerial view of a Rhodope village, with headline and statistics",
+            alt: "Bookapart homepage",
           },
-          stays: {
+          places: {
             label: "Stays",
-            alt: "BookApart stays listing with filters for studios, one-bedroom and two-bedroom apartments",
+            alt: "Bookapart list of stays",
+          },
+          place: {
+            label: "Stay",
+            alt: "Bookapart page for a single apartment ",
           },
           landmarks: {
             label: "Landmarks",
-            alt: "BookApart landmarks map with clustered photo markers",
-          },
-          mobile: {
-            label: "Mobile",
-            alt: "BookApart homepage on mobile",
+            alt: "Bookapart map of landmarks in the Rhodope mountains",
           },
         },
       },
@@ -181,50 +163,35 @@ export const en: Dictionary = {
   experience: {
     eyebrow: "Experience",
     title: "Professional experience",
-    areasLabel: "Areas of experience",
+    areasLabel: "Areas of work",
     entries: {
       orak: {
-        role: "Programmer – Software Applications",
+        role: "Programmer/Developer, Software Applications",
         company: "Orak Engineering EOOD",
         location: "Plovdiv, Bulgaria",
         summary:
-          "Develop and maintain web applications using C#/.NET and React/TypeScript, working across backend services, frontend interfaces, APIs, databases, integrations, and production software.",
-        tags: ["C# / .NET", "ASP.NET Core", "React", "TypeScript"],
-        areas: [
-          "JavaScript",
-          "REST APIs",
-          "SQL",
+          "I develop and maintain web applications with C#/.NET on the backend and React/TypeScript on the frontend, and contribute to production software with real-time functionality and a multi-tenant architecture.",
+        tags: [
+          "C# / .NET",
+          "ASP.NET Core",
+          "React",
+          "TypeScript",
           "SQL Server",
-          "PostgreSQL",
-          "Redis",
-          "Next.js",
-          "Tailwind CSS",
-          "Authentication and authorization",
-          "Role-based access",
-          "External API integrations",
-          "WebSockets",
-          "Real-time systems",
-          "Multi-tenant architecture",
-          "CI/CD",
-          "Microsoft Azure",
-          "Docker",
-          "GitHub Actions",
-          "Cloudflare",
         ],
       },
       skai: {
         role: "C#/.NET Programmer Intern",
         company: "SKAI VIU LTD",
         location: "Smolyan, Bulgaria",
-        summary: "Formal internship experience in C#/.NET software development.",
+        summary: "A formal summer internship in C#/.NET software development.",
         tags: [],
       },
     },
   },
   footer: {
     owner: "Stoil Sedyankov",
-    tagline: "Stoil Sedyankov — Software Engineer. Plovdiv, Bulgaria.",
+    tagline: "",
     rights: "All rights reserved.",
-    builtBy: "Designed and built by Stoil Sedyankov",
+    builtBy: "",
   },
 };

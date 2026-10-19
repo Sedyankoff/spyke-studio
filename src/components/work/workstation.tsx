@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { SpykeMark } from "@/components/brand/spyke-logo";
+import { SpykeLogo, SpykeMark } from "@/components/brand/spyke-logo";
+import { LiveFrames, type LiveFrame } from "@/components/work/live-frames";
 import { ProjectWindow } from "@/components/work/project-window";
+import {
+  CAPTURE_ASPECT,
+  DESKTOP_VIEWPORT,
+  MONITOR_SIZES,
+} from "@/components/work/screen-sizes";
 import type { Dictionary } from "@/content/dictionary";
 import type { Project, ProjectId } from "@/content/schema";
 import { cn } from "@/lib/utils";
@@ -21,9 +26,16 @@ interface WorkstationProps {
   view: number;
   /** Whether the next window to open takes focus — never on page load. */
   focusOnOpen: boolean;
-  /** Live site for the open project, if it may be shown on this device. */
-  live: string | null;
-  onLiveFail: () => void;
+  /** Whether the open project's live site leads its views on this device. */
+  live: boolean;
+  /**
+   * The live site to frame now — only while it is the view on show and the
+   * screen is near the viewport.
+   */
+  frame: LiveFrame | null;
+  /** A live site to load hidden, ahead of the reader opening it. */
+  warmFrame: LiveFrame | null;
+  onLiveFail: (id: ProjectId) => void;
   hoverId: ProjectId | null;
   desktopRef: React.RefObject<HTMLDivElement | null>;
   onOpen: (id: ProjectId) => void;
@@ -45,6 +57,8 @@ export function Workstation({
   view,
   focusOnOpen,
   live,
+  frame,
+  warmFrame,
   onLiveFail,
   hoverId,
   desktopRef,
@@ -58,22 +72,6 @@ export function Workstation({
     ? projects.find((project) => project.id === open.id)
     : undefined;
 
-  // A live site is only loaded once the screen is near the viewport.
-  const screenRef = useRef<HTMLDivElement>(null);
-  const [nearView, setNearView] = useState(false);
-  useEffect(() => {
-    const screen = screenRef.current;
-    if (!screen || nearView) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setNearView(true);
-      },
-      { rootMargin: "300px 0px" },
-    );
-    observer.observe(screen);
-    return () => observer.disconnect();
-  }, [nearView]);
-
   return (
     <div
       role="group"
@@ -84,17 +82,18 @@ export function Workstation({
       className={className}
     >
       {/* Display --------------------------------------------------------- */}
-      <div className="rounded-[1rem] border border-line-invert bg-[#12110f] p-1.5 shadow-[0_80px_140px_-70px_rgb(0_0_0/0.95)] sm:rounded-[1.25rem] sm:p-2.5 lg:rounded-[1.5rem] lg:p-3">
-        <div
-          ref={screenRef}
-          className="relative aspect-[16/10] overflow-hidden rounded-[0.625rem] bg-void ring-1 ring-black/60 sm:aspect-video sm:rounded-[0.75rem]">
+      <div className="rounded-[0.875rem] border border-line-invert bg-[#12110f] p-1.5 pb-0 shadow-[0_80px_140px_-70px_rgb(0_0_0/0.95)] sm:rounded-[1rem] sm:p-2 sm:pb-0 lg:rounded-[1.125rem] lg:p-2.5 lg:pb-0">
+        <div className="relative overflow-hidden rounded-[0.5rem] bg-void ring-1 ring-black/60 sm:rounded-[0.625rem]">
+          {/* The opening: exactly one capture. */}
+          <div aria-hidden="true" className={CAPTURE_ASPECT} />
+
           <div ref={desktopRef} className="absolute inset-0 overflow-hidden">
             {/* Wallpaper: the site's engineering grid and the mark. */}
             <div aria-hidden="true" className="absolute inset-0">
               <div className="blueprint absolute inset-0 opacity-60" />
               <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_45%,rgb(245_242_236/0.05),transparent_75%)]" />
               <div className="absolute right-[4%] bottom-[7%] h-[26%] opacity-[0.05]">
-                <SpykeMark sizes="200px" />
+                <SpykeMark sizes="256px" />
               </div>
             </div>
 
@@ -127,26 +126,44 @@ export function Workstation({
                   project={active}
                   copy={work.projects[active.id]}
                   work={work}
-                  views={active.images.filter((image) => image.kind === "desktop")}
+                  screens={active.screens}
                   origin={open.origin}
-                  live={nearView ? live : null}
-                  onLiveFail={onLiveFail}
+                  live={live}
                   view={view}
                   focusOnOpen={focusOnOpen}
                   onStep={onStep}
                 />
               )}
             </AnimatePresence>
+
+            {/*
+              Laid exactly over the window. The frame fades in once the
+              window has grown and out before it shrinks.
+            */}
+            <LiveFrames
+              current={frame}
+              warm={warmFrame}
+              viewport={DESKTOP_VIEWPORT}
+              titleOf={(id) => `${work.projects[id].name} — ${work.liveView}`}
+              posterOf={(id) =>
+                projects.find((project) => project.id === id)?.screens[0]
+                  ?.desktop
+              }
+              posterSizes={MONITOR_SIZES}
+              loadingLabel={work.liveLoading}
+              shownClassName="delay-500"
+              onFail={onLiveFail}
+            />
           </div>
         </div>
 
-        {/* Chin */}
+        {/* Chin, with the studio's name on it */}
         <div
           aria-hidden="true"
-          className="hidden h-6 items-center justify-center sm:flex lg:h-8"
+          className="flex h-6 items-center justify-center sm:h-8 lg:h-10"
         >
-          <span className="block h-2.5 opacity-30 lg:h-3">
-            <SpykeMark sizes="12px" />
+          <span className="block h-2.5 opacity-55 sm:h-3 lg:h-3.5">
+            <SpykeLogo tone="paper" sizes="48px" />
           </span>
         </div>
       </div>
