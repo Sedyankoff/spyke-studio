@@ -4,7 +4,7 @@ export const siteConfig = {
   name: "Spyke Studio",
   /** Production origin. Canonical URLs, the sitemap and social cards derive from it. */
   url: "https://spykedev.com",
-  email: "stoil0878@gmail.com",
+  email: "stoilpsedyankov@gmail.com",
   /** Display form and dialable form of the same number. */
   phone: { display: "+359 878 245 747", href: "tel:+359878245747" },
   person: {
